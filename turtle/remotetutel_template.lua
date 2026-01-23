@@ -1,6 +1,6 @@
 SERVER_URL = '' -- empty cuz template
 
-websocket_url = string.format('ws://%s/ws/turtle', SERVER_URL)
+websocket_url = string.format('ws://%s/ws/turtles', SERVER_URL)
 websocket = nil
 
 function main()
@@ -18,7 +18,7 @@ function main()
     end
 
     --connection info
-    websocket.send(textutils.serialiseJSON({type='open', id=tostring(os.computerID())}))
+    websocket.send(textutils.serialiseJSON({type='authentication', id=tostring(os.computerID())}))
 
     --receive and eval messages
     function process_websocket_message()

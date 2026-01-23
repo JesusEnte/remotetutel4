@@ -1,14 +1,17 @@
-from flask import Flask
+from flask import Flask, request
+from simple_websocket import Server
 from dotenv import load_dotenv
 import os
 
-from backend.turtles import Turtle, TurtleCollection
+from backend.turtles import Turtle, TurtleCollection, turtle_connection_handler
 from backend.blocks import Block, BlockCollection 
+from backend.frontends import User, frontend_connection_handler
 
 load_dotenv()
 
 app = Flask(__name__, static_url_path='', static_folder='frontend/dist')
 
+user = None
 turtles = TurtleCollection()
 blocks = BlockCollection()
 
@@ -17,6 +20,18 @@ blocks = BlockCollection()
 @app.route('/index')
 def root():
     return app.send_static_file('index.html')
+
+#Serve websockets for turtles and frontends
+@app.route('/ws/turtles', websocket=True)
+def ws_turtle():
+    ws = Server.accept(request.environ)
+    turtle_connection_handler(ws, turtles)
+
+@app.route('/ws/frontends', websocket=True)
+def ws_frontend():
+    ws = Server.accept(request.environ)
+    frontend_connection_handler(ws, user)
+
 
 #Serve wget for turtles
 @app.route('/startup.lua')
