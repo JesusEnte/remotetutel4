@@ -2,6 +2,7 @@ from flask import Flask, request
 from simple_websocket import Server
 from dotenv import load_dotenv
 import os
+import gevent
 
 from backend.turtles import Turtle, TurtleCollection, turtle_connection_handler
 from backend.blocks import Block, BlockCollection 
@@ -26,11 +27,18 @@ def root():
 def ws_turtle():
     ws = Server.accept(request.environ)
     turtle_connection_handler(ws, turtles)
+    while ws.connected:
+        gevent.sleep(5)
+    return "Connection Closed"
+    
 
 @app.route('/ws/frontends', websocket=True)
 def ws_frontend():
     ws = Server.accept(request.environ)
     frontend_connection_handler(ws, user)
+    while ws.connected:
+        gevent.sleep(5)
+    return "Connection Closed"
 
 
 #Serve wget for turtles
@@ -83,5 +91,5 @@ def after_app():
 
 if __name__ == '__main__':
     before_app()
-    app.run(host='0.0.0.0', port=os.getenv('PORT') or 80)
+    app.run(host='0.0.0.0', port=os.getenv('PORT') or 80, debug=True)
     after_app()
