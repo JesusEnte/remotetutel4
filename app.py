@@ -29,6 +29,7 @@ def ws_turtle():
     turtle_connection_handler(ws, turtles)
     while ws.connected:
         gevent.sleep(5)
+    print('Turtle disconnected')
     return "Connection Closed"
     
 
@@ -38,6 +39,7 @@ def ws_frontend():
     frontend_connection_handler(ws, user)
     while ws.connected:
         gevent.sleep(5)
+    print('Client disconnected')
     return "Connection Closed"
 
 
