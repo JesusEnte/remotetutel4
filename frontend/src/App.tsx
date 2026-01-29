@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import LoginPage from './components/login.tsx'
+import ControlPage from './components/control.tsx'
 import './App.css'
 
 export default function App() {
@@ -11,6 +12,9 @@ export default function App() {
     return <LoginPage 
       setWebsocket={setWebsocket} 
       error={error}
-      setError={setError}/>
+      setError={setError}
+    />
+  } else {
+    return <ControlPage websocket={websocket}/>
   }
 }

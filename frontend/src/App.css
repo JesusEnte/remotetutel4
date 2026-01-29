@@ -13,3 +13,7 @@ h1 {
 input {
   margin: 30px;
 }
+
+p {
+  margin: 0;
+}

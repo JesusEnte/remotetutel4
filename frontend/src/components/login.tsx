@@ -21,7 +21,7 @@ function connectWebsocketBackend(password: String, setWebsocket: (ws: WebSocket 
 
   ws.onclose = () => {
     setWebsocket(null)
-    setError(has_connected ? 'Disconnected' : 'Timeout')
+    setError(has_connected ? 'Disconnected' : 'Server is offline')
   }
 
   ws.onopen = () => {
