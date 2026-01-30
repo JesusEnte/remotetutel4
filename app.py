@@ -49,7 +49,7 @@ def wget_startup():
     with open('turtle/startup_template.lua', 'r') as template:
         #Change SERVER_URL in template
         file = template.read()
-        url = f'{os.getenv('HOST')}:{os.getenv('PORT')}'
+        url = f'{os.getenv('HOST', '127.0.0.1')}:{os.getenv('PORT', 80)}'
         file = file.replace('SERVER_URL = \'\'', f'SERVER_URL = \'{url}\'', 1)
         return file
     
@@ -58,7 +58,7 @@ def wget_remotetutel():
     with open('turtle/remotetutel_template.lua', 'r') as template:
         #Change SERVER_URL in template
         file = template.read()
-        url = f'{os.getenv('HOST')}:{os.getenv('PORT')}'
+        url = f'{os.getenv('HOST', '127.0.0.1')}:{os.getenv('PORT', 80)}'
         file = file.replace('SERVER_URL = \'\'', f'SERVER_URL = \'{url}\'', 1)
         return file
 
