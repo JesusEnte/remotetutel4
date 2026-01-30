@@ -16,7 +16,7 @@ class Turtle:
 
     def get_status(self) -> str:
         if None in [self.x, self.y, self.z, self.dir]:
-            return 'position_unknown'
+            return 'unknown position'
         elif self.ws is not None and self.ws.connected:
             return 'online'
         else:
@@ -36,17 +36,16 @@ class TurtleCollection:
         if id in self.turtles:
             self.turtles.pop(id)
 
-    def to_json(self) -> str:
-        simplified_dict = {}
+    def to_jsonable_dict(self) -> dict:
+        jsonable_dict = {}
         for k, v in self.turtles.items():
-            simplified_dict[k] = {'id': v.id, 'x': v.x, 'y': v.y, 'z': v.z, 'dir': v.dir}
-        return json.dumps(simplified_dict)
+            jsonable_dict[k] = {'id': v.id, 'x': v.x, 'y': v.y, 'z': v.z, 'dir': v.dir, 'status': v.status}
+        return jsonable_dict
     
-    def from_json(self, json_string):
+    def from_jsonable_dict(self, jsonable_dict):
         self.turtles = {}
-        simplified_dict = json.loads(json_string)
-        for k, v in simplified_dict.items():
-            self.turtles[k] = Turtle(**v)
+        for k, v in jsonable_dict.items():
+            self.turtles[k] = Turtle(v['id'], v['x'], v['y'], v['z'], v['dir'])
 
 def turtle_connection_handler(ws, turtles):
     message = json.loads(ws.receive())

@@ -3,16 +3,17 @@ from simple_websocket import Server
 from dotenv import load_dotenv
 import os
 import gevent
+import json
 
-from backend.turtles import Turtle, TurtleCollection, turtle_connection_handler
-from backend.blocks import Block, BlockCollection 
+from backend.turtles import TurtleCollection, turtle_connection_handler
+from backend.blocks import BlockCollection 
 from backend.frontends import User, frontend_connection_handler
 
 load_dotenv()
 
 app = Flask(__name__, static_url_path='', static_folder='frontend/dist')
 
-user = None
+user: User = None
 turtles = TurtleCollection()
 blocks = BlockCollection()
 
@@ -36,7 +37,7 @@ def ws_turtle():
 @app.route('/ws/frontends', websocket=True)
 def ws_frontend():
     ws = Server.accept(request.environ)
-    frontend_connection_handler(ws, user)
+    frontend_connection_handler(ws, user, turtles, blocks)
     while ws.connected:
         gevent.sleep(5)
     print('Client disconnected')
@@ -70,28 +71,28 @@ def before_app():
     try:
         with open('saves/blocks.json', 'r') as file:
             json_string = file.read()
-            blocks.from_json(json_string)
+            blocks.from_jsonable_dict(json.loads(json_string))
     except FileNotFoundError:
         print('No blocks.json save file found')
     #load turtles
     try:
         with open('saves/turtles.json', 'r') as file:
             json_string = file.read()
-            turtles.from_json(json_string)
+            turtles.from_jsonable_dict(json.loads(json_string))
     except FileNotFoundError:
         print('No turtles.json save file found')
 
 def after_app():
     #save blocks
     with open('saves/blocks.json', 'w') as file:
-        json_string = blocks.to_json()
+        json_string = json.dumps(blocks.to_jsonable_dict())
         file.write(json_string)
     #save turtles
     with open('saves/turtles.json', 'w') as file:
-        json_string = turtles.to_json()
+        json_string = json.dumps(turtles.to_jsonable_dict())
         file.write(json_string)
 
 if __name__ == '__main__':
     before_app()
-    app.run(host='0.0.0.0', port=os.getenv('PORT') or 80, debug=True)
+    app.run(host='0.0.0.0', port=os.getenv('PORT') or 80)
     after_app()

@@ -3,10 +3,6 @@ import type { ThreeRefCurrent } from './control/renderer'
 import Hud from './control/hud'
 import { useRef, useEffect } from 'react'
 
-function websocket_message_handler(ev: MessageEvent){
-    const message = JSON.parse(ev.data)
-    console.log(message)
-}
 
 interface ControlPageProps {
     websocket: WebSocket
@@ -15,6 +11,18 @@ interface ControlPageProps {
 export default function ControlPage(props: ControlPageProps){
     const websocket = props.websocket
     const threeRef = useRef<ThreeRefCurrent>(null!)
+
+    function websocket_message_handler(ev: MessageEvent){
+        const message = JSON.parse(ev.data)
+        switch (message.type) {
+            case 'turtles':
+                threeRef.current.funcs.setTurtles(message.turtles)
+                break
+            case 'blocks':
+                threeRef.current.funcs.setBlocks(message.blocks)
+                break
+        }
+    }
 
     useEffect(() => {
         websocket.onmessage = websocket_message_handler

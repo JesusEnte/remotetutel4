@@ -1,15 +1,23 @@
 import json
 import os
 import simple_websocket
+from backend.turtles import TurtleCollection
+from backend.blocks import BlockCollection
 
 class User:
-    def __init__(self, ws=None):
+    def __init__(self, ws: simple_websocket.Server = None):
         self.ws = ws
 
-    def on_message(self, message):
-        print('message')
+    def on_message(self, message, turtles: TurtleCollection, blocks: BlockCollection):
+        if message.get('type') is None:
+            return
+        match (message['type']):
+            case 'get turtles':
+                self.ws.send(json.dumps({'type': 'turtles', 'turtles': turtles.to_jsonable_dict()}))
+            case 'get blocks':
+                self.ws.send(json.dumps({'type': 'blocks', 'blocks': blocks.to_jsonable_dict()}))
 
-def frontend_connection_handler(ws, user):
+def frontend_connection_handler(ws, user, turtles: TurtleCollection, blocks: BlockCollection):
     message = json.loads(ws.receive())
     if message.get('type') != 'authentication':
         return
@@ -19,9 +27,9 @@ def frontend_connection_handler(ws, user):
         print('Client connected')
         while ws.connected:
             try:
-                user.on_message(json.loads(ws.receive()))
+                user.on_message(json.loads(ws.receive()), turtles, blocks)
             except simple_websocket.ConnectionClosed:
-                ...
+                return
     else:
         ws.send(json.dumps({'type': 'authentication', 'status': 'wrong password'}))
         print('Client tried to connect with wrong password')
