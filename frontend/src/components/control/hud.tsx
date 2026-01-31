@@ -23,18 +23,17 @@ export default function Hud(props: HudProps){
     const [selectedTurtleId, setSelectedTurtleId] = useState<string|null>(null)
     const [turtles, setTurtles] = useState<Turtles>({})
     const [inventory, setInventory] = useState<Inventory>({})
-    
+    console.log(inventory)
     shared.selectedTurtleId = selectedTurtleId
     shared.hudFuncs = {setTurtles, setSelectedTurtleId, setInventory}
+
+    const selectedTurtle = selectedTurtleId ? turtles[selectedTurtleId] : null
 
     return <>
         <div style={{
             ...props.style,
             left: 0,
             top: 0,
-            width: '10svw',
-            height: '5svh',
-            backgroundColor: 'red',
         }}>
             <select
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -49,6 +48,9 @@ export default function Hud(props: HudProps){
                     }))
                 }
             </select>
+            {selectedTurtle ? <p>
+                🌎 {selectedTurtle.x} {selectedTurtle.y} {selectedTurtle.z} 🧭 {['n', 'e', 's', 'w'][selectedTurtle.dir]} ⛽ {selectedTurtle.fuel ? selectedTurtle.fuel : '?'}
+            </p> : null}
         </div>
 
         <div style={{
