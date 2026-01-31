@@ -6,13 +6,13 @@ class Turtle:
         self.x = x
         self.y = y
         self.z = z
-        self.dir = dir
+        self.dir = dir #0=North, 1=East, 2=South, 3=West
         self.ws = ws
         self.status = self.get_status()
 
     def set_websocket(self, ws):
         self.ws = ws
-        self.status = self.get_status
+        self.status = self.get_status()
 
     def get_status(self) -> str:
         if None in [self.x, self.y, self.z, self.dir]:

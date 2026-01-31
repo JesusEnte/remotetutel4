@@ -1,7 +1,8 @@
 import { useRef, useEffect } from "react"
 import * as THREE from 'three'
-import { OrbitControls } from 'three/addons'
+import { OrbitControls, GLTFLoader } from 'three/addons'
 
+import turtleglb from './assets/turtle/turtle.glb'
 
 interface RendererProps {
     threeRef: React.RefObject<ThreeRefCurrent>,
@@ -44,18 +45,22 @@ export default function Renderer(props: RendererProps){
     //threejs setup
     useEffect(() => {
         const scene = new THREE.Scene()
-        scene.background = new THREE.Color(109 / 255, 125 / 255, 168 / 255)
+        scene.background = new THREE.Color(40 / 255, 116 / 255, 178 / 255)
+
         const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000)
+        camera.position.set(5, 5, 5)
+
         const renderer = new THREE.WebGLRenderer({canvas: canvasRef.current, antialias: true})
         renderer.setSize(window.innerWidth, window.innerHeight);
+
         const controls = new OrbitControls(camera, renderer.domElement)
         controls.enablePan = false
         controls.touches = {
             ONE: THREE.TOUCH.ROTATE,
             TWO: THREE.TOUCH.DOLLY_PAN
         }
+        const loader = new GLTFLoader();
 
-        camera.position.set(5, 5, 5)
         
         renderer.setAnimationLoop(() => {
             controls.update()
@@ -79,17 +84,33 @@ export default function Renderer(props: RendererProps){
                 const hue = hash % 359
                 const color = new THREE.Color(`hsl(${hue}, 100%, 50%)`)
                 const geometry = new THREE.BoxGeometry(1, 1, 1)
+                const edges = new THREE.EdgesGeometry(geometry)
+                const lines = new THREE.LineSegments(edges, new THREE.MeshBasicMaterial({color: 'black'}))
                 const material = new THREE.MeshBasicMaterial({color: color})
                 const cube = new THREE.Mesh(geometry, material)
+                cube.add(lines)
                 cube.position.set(block.x, block.y, block.z)
                 cube.name = `block ${key}`
+                
                 scene.add(cube)
             }
         }
         function setTurtles(turtles: Turtles): void {
             for (const [id, turtle] of Object.entries(turtles)) {
                 if (turtle.status == 'unknown position') return
-                console.log(id, turtle)
+                const old = scene.getObjectByName(`turtle ${id}`)
+                if (old) {
+                    old.position.set(turtle.x, turtle.y, turtle.z)
+                    old.rotation.y = 0.5 * Math.PI * (turtle.dir - 2)
+                } else {
+                    loader.load(turtleglb, (glb) => {
+                        const mesh = glb.scene.children[0]
+                        mesh.name = `turtle ${id}`
+                        mesh.position.set(turtle.x, turtle.y, turtle.z)
+                        mesh.rotation.y = 0.5 * Math.PI * (turtle.dir - 2)
+                        scene.add(mesh)
+                    })
+                }
             }
         }
         
