@@ -1,23 +1,15 @@
 import { useRef, useEffect } from "react"
 import * as THREE from 'three'
 import { OrbitControls, GLTFLoader } from 'three/addons'
+import type { Shared, Turtles } from "../control"
 
 import turtleglb from './assets/turtle/turtle.glb'
 
 interface RendererProps {
-    threeRef: React.RefObject<ThreeRefCurrent>,
+    sharedRef: React.RefObject<Shared>,
     style: React.CSSProperties,
 }
 
-interface Turtle {
-    id: number,
-    x: number,
-    y: number
-    z: number,
-    dir: number,
-    status: string
-}
-type Turtles = Record<string, Turtle>
 interface Block {
     x: number,
     y: number,
@@ -26,21 +18,16 @@ interface Block {
 }
 type Blocks = Record<string, Block>
 
-interface ThreeFunctions {
+export interface ThreeFunctions {
     setBlocks(blocks: Blocks): void,
-    setTurtles(turtles: Turtles): void
+    setTurtles(turtles: Turtles): void,
+    setTarget(turtle_id: string): void
 }
 
-export interface ThreeRefCurrent {
-    scene: THREE.Scene,
-    camera: THREE.Camera,
-    renderer: THREE.WebGLRenderer,
-    controls: OrbitControls,
-    funcs: ThreeFunctions
-}
 
 export default function Renderer(props: RendererProps){
     const canvasRef = useRef<HTMLCanvasElement>(null!)
+    const shared = props.sharedRef.current
 
     //threejs setup
     useEffect(() => {
@@ -67,7 +54,16 @@ export default function Renderer(props: RendererProps){
             renderer.render(scene, camera)
         })
 
+
         //util
+        function setTarget(turtle_id: string): void {
+            const new_model = scene.getObjectByName(`turtle ${turtle_id}`)
+            const old_pos = controls.target.clone()
+            const new_pos = new_model!.position.clone()
+            const diff = new THREE.Vector3(new_pos.x - old_pos.x, new_pos.y - old_pos.y, new_pos.z - old_pos.z)
+            controls.target = new_model!.position
+            camera.position.add(diff)
+        }
         function setBlocks(blocks: Blocks): void {
             for (const [key, block] of Object.entries(blocks)) {
                 //delete old block if existing
@@ -98,34 +94,36 @@ export default function Renderer(props: RendererProps){
         function setTurtles(turtles: Turtles): void {
             for (const [id, turtle] of Object.entries(turtles)) {
                 if (turtle.status == 'unknown position') return
-                const old = scene.getObjectByName(`turtle ${id}`)
-                if (old) {
-                    old.position.set(turtle.x, turtle.y, turtle.z)
-                    old.rotation.y = 0.5 * Math.PI * (turtle.dir - 2)
+                let model = scene.getObjectByName(`turtle ${id}`)
+                if (model) {
+                    //move camera along
+                    const old_pos = model.position.clone()
+                    const new_pos = new THREE.Vector3(turtle.x, turtle.y, turtle.z)
+                    const diff = new THREE.Vector3(new_pos.x - old_pos.x, new_pos.y - old_pos.y, new_pos.z - old_pos.z)
+                    camera.position.add(diff)
+                    //move existing turtle
+                    model.position.set(turtle.x, turtle.y, turtle.z)
+                    model.rotation.y = 0.5 * Math.PI * (turtle.dir - 2)
                 } else {
+                    //create new turtle
                     loader.load(turtleglb, (glb) => {
-                        const mesh = glb.scene.children[0]
-                        mesh.name = `turtle ${id}`
-                        mesh.position.set(turtle.x, turtle.y, turtle.z)
-                        mesh.rotation.y = 0.5 * Math.PI * (turtle.dir - 2)
-                        scene.add(mesh)
+                        model = glb.scene.children[0]
+                        model.name = `turtle ${id}`
+                        model.position.set(turtle.x, turtle.y, turtle.z)
+                        model.rotation.y = 0.5 * Math.PI * (turtle.dir - 2)
+                        scene.add(model)
                     })
                 }
             }
         }
         
         //pass stuff to control component
-        props.threeRef.current = {
-            scene: scene, 
-            camera: camera, 
-            renderer:renderer, 
-            controls: controls,
-            funcs: {
-                setBlocks,
-                setTurtles
-            }
-        }
+        shared.scene = scene
+        shared.camera = camera
+        shared.renderer = renderer
+        shared.controls = controls
+        shared.threeFuncs = {setBlocks, setTurtles, setTarget}
     }, [])
 
-    return <canvas style={props.style} ref={canvasRef}></canvas>
+    return <canvas style={props.style} ref={canvasRef}/>
 }

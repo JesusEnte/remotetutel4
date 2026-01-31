@@ -1,13 +1,14 @@
 import json
 
 class Turtle:
-    def __init__(self, id, x=None, y=None, z=None, dir=None, ws=None):
+    def __init__(self, id, x=None, y=None, z=None, dir=None, fuel=None, ws=None):
         self.id = id
         self.x = x
         self.y = y
         self.z = z
         self.dir = dir #0=North, 1=East, 2=South, 3=West
         self.ws = ws
+        self.fuel = fuel
         self.status = self.get_status()
 
     def set_websocket(self, ws):
@@ -26,8 +27,8 @@ class TurtleCollection:
     def __init__(self):
         self.turtles = {}
         
-    def add(self, id, x=None, y=None, z=None, dir=None, ws=None):
-        self.turtles[id] = Turtle(id, x, y, z, dir, ws)
+    def add(self, id, x=None, y=None, z=None, dir=None, fuel=None, ws=None):
+        self.turtles[id] = Turtle(id, x, y, z, dir, fuel, ws)
 
     def get(self, id) -> Turtle | None:
         return self.turtles.get(id, None)
@@ -39,13 +40,13 @@ class TurtleCollection:
     def to_jsonable_dict(self) -> dict:
         jsonable_dict = {}
         for k, v in self.turtles.items():
-            jsonable_dict[k] = {'id': v.id, 'x': v.x, 'y': v.y, 'z': v.z, 'dir': v.dir, 'status': v.status}
+            jsonable_dict[k] = {'id': v.id, 'x': v.x, 'y': v.y, 'z': v.z, 'dir': v.dir, 'fuel': v.fuel, 'status': v.status}
         return jsonable_dict
     
     def from_jsonable_dict(self, jsonable_dict):
         self.turtles = {}
         for k, v in jsonable_dict.items():
-            self.turtles[k] = Turtle(v['id'], v['x'], v['y'], v['z'], v['dir'])
+            self.turtles[k] = Turtle(v.get('id'), v.get('x'), v.get('y'), v.get('z'), v.get('dir'), v.get('fuel'))
 
 def turtle_connection_handler(ws, turtles):
     message = json.loads(ws.receive())

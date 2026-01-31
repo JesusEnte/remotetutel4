@@ -1,6 +1,9 @@
 import Renderer from './control/renderer'
-import type { ThreeRefCurrent } from './control/renderer'
+import type { ThreeFunctions } from './control/renderer'
+import type { Scene, Camera, WebGLRenderer } from 'three'
+import type { OrbitControls } from 'three/addons'
 import Hud from './control/hud'
+import type { HudFuncs } from './control/hud'
 import { useRef, useEffect } from 'react'
 
 
@@ -8,18 +11,49 @@ interface ControlPageProps {
     websocket: WebSocket
 }
 
+export interface Shared {
+    scene: Scene,
+    camera: Camera,
+    renderer: WebGLRenderer,
+    controls: OrbitControls,
+    threeFuncs: ThreeFunctions,
+    selectedTurtleId: string | null,
+    hudFuncs: HudFuncs
+}
+
+export interface Turtle {
+    id: string,
+    x: number,
+    y: number
+    z: number,
+    dir: number,
+    fuel: number,
+    status: string
+}
+export type Turtles = Record<string, Turtle>
+
 export default function ControlPage(props: ControlPageProps){
     const websocket = props.websocket
-    const threeRef = useRef<ThreeRefCurrent>(null!)
+    const sharedRef = useRef<Shared>({
+        scene: null!,
+        camera: null!,
+        renderer: null!,
+        controls: null!,
+        threeFuncs: null!,
+        selectedTurtleId: null!,
+        hudFuncs: null!
+    })
+    const shared = sharedRef.current
 
     function websocket_message_handler(ev: MessageEvent){
         const message = JSON.parse(ev.data)
         switch (message.type) {
             case 'turtles':
-                threeRef.current.funcs.setTurtles(message.turtles)
+                shared.threeFuncs.setTurtles(message.turtles)
+                shared.hudFuncs.setTurtles(message.turtles)
                 break
             case 'blocks':
-                threeRef.current.funcs.setBlocks(message.blocks)
+                shared.threeFuncs.setBlocks(message.blocks)
                 break
         }
     }
@@ -32,7 +66,7 @@ export default function ControlPage(props: ControlPageProps){
     
     return (<>
         <Renderer 
-            threeRef={threeRef}
+            sharedRef={sharedRef}
             style={{
                 position: 'absolute', 
                 width: '100svw', 
@@ -42,11 +76,10 @@ export default function ControlPage(props: ControlPageProps){
                 zIndex: 1
             }}
         />
-        <Hud 
+        <Hud
+            sharedRef={sharedRef} 
             style={{
-                position: 'absolute', 
-                left: 0,
-                top: 0,
+                position: 'absolute',
                 zIndex: 2
             }}
         />
