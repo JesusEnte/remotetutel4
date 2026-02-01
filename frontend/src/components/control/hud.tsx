@@ -2,23 +2,23 @@ import type { Shared, Turtles } from "../control"
 import { useState } from "react"
 
 interface HudProps {
-    sharedRef: React.RefObject<Shared>,
+    sharedRef: React.RefObject<Shared>
     style: React.CSSProperties
 }
 
 export interface HudFuncs {
-    setTurtles(turtles: Turtles): void,
+    updateTurtles(turtles: Turtles): void
     setSelectedTurtleId(id: string): void
     setInventory(inventory: Inventory): void
 }
 
 interface Slot {
-    item: string,
+    item: string
     amount: number 
 }
 type Inventory = Record<number, Slot>
 
-function ATJ(props: any){
+function ATI(props: any){
     const defaultValue = props.defaultValue
 
     return <input
@@ -36,21 +36,48 @@ function ATJ(props: any){
         onInput={(ev: React.InputEvent<HTMLInputElement>) => {
             const target = ev.target as HTMLInputElement
             target.style.width = `${target.value.length + 1}ch`
-            
         }}
     />
 }
 
+
 export default function Hud(props: HudProps){
     const shared = props.sharedRef.current
     const [selectedTurtleId, setSelectedTurtleId] = useState<string|null>(null)
-    const [turtles, setTurtles] = useState<Turtles>({})
+    const [turtles, _setTurtles] = useState<Turtles>({})
+    function updateTurtles(ts: Turtles){
+        const clone = structuredClone(turtles)
+        for (const [id, t] of Object.entries(ts)){
+            clone[id] = t
+        }
+        _setTurtles(clone)
+    }
     const [inventory, setInventory] = useState<Inventory>({})
     console.log(inventory)
     shared.selectedTurtleId = selectedTurtleId
-    shared.hudFuncs = {setTurtles, setSelectedTurtleId, setInventory}
-
+    shared.hudFuncs = {updateTurtles, setSelectedTurtleId, setInventory}
+    
+    const ws = shared.websocket
+    
     const selectedTurtle = selectedTurtleId ? turtles[selectedTurtleId] : null
+    
+    function onEnterATI(ev: React.KeyboardEvent<HTMLInputElement>, property: string){
+        if (ev.key != 'Enter') return
+        const target = ev.target as HTMLInputElement
+        const value = target.value
+        switch (property){
+            case 'x':
+            case 'y':
+            case 'z':
+                ws.send(JSON.stringify({type: 'update info', id: selectedTurtleId, info: {[property]: parseInt(value, 10)}}))
+                break
+            case 'dir':
+                let dir: number | null = ['n', 'e', 's', 'w'].indexOf(value.toLowerCase())
+                if (dir == -1) dir = null
+                ws.send(JSON.stringify({type: 'update info', id: selectedTurtleId, info: {[property]: dir}}))
+                break
+        }
+    }
 
     const infos = {x: '?', y: '?', z: '?', dir: '?', fuel: '?'}
 
@@ -85,13 +112,13 @@ export default function Hud(props: HudProps){
                     }))
                 }
             </select>
-            {selectedTurtle ? <p>
-                🌎&nbsp;
-                <ATJ defaultValue={infos.x}/>
-                &nbsp;<ATJ defaultValue={infos.y}/>
-                &nbsp;<ATJ defaultValue={infos.z}/>
-                &nbsp;🧭&nbsp;
-                <ATJ defaultValue={infos.dir}/>
+            {selectedTurtle ? <p key={selectedTurtleId}>
+                🌎
+                <ATI defaultValue={infos.x} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'x')}}/>
+                &nbsp;<ATI defaultValue={infos.y} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'y')}}/>
+                &nbsp;<ATI defaultValue={infos.z} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'z')}}/>
+                &nbsp;🧭
+                <ATI defaultValue={infos.dir} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'dir')}}/>
                 &nbsp;⛽ {infos.fuel}
             </p> : null}
         </div>

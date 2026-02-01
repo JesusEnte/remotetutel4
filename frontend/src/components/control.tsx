@@ -12,22 +12,23 @@ interface ControlPageProps {
 }
 
 export interface Shared {
-    scene: Scene,
-    camera: Camera,
-    renderer: WebGLRenderer,
-    controls: OrbitControls,
-    threeFuncs: ThreeFunctions,
-    selectedTurtleId: string | null,
+    scene: Scene
+    camera: Camera
+    renderer: WebGLRenderer
+    controls: OrbitControls
+    threeFuncs: ThreeFunctions
+    selectedTurtleId: string | null
     hudFuncs: HudFuncs
+    websocket: WebSocket
 }
 
 export interface Turtle {
-    id: string,
-    x: number,
+    id: string
+    x: number
     y: number
-    z: number,
-    dir: number,
-    fuel: number,
+    z: number
+    dir: number
+    fuel: number
     status: string
 }
 export type Turtles = Record<string, Turtle>
@@ -41,7 +42,8 @@ export default function ControlPage(props: ControlPageProps){
         controls: null!,
         threeFuncs: null!,
         selectedTurtleId: null!,
-        hudFuncs: null!
+        hudFuncs: null!,
+        websocket: websocket
     })
     const shared = sharedRef.current
 
@@ -49,11 +51,11 @@ export default function ControlPage(props: ControlPageProps){
         const message = JSON.parse(ev.data)
         switch (message.type) {
             case 'turtles':
-                shared.threeFuncs.setTurtles(message.turtles)
-                shared.hudFuncs.setTurtles(message.turtles)
+                shared.threeFuncs.updateTurtles(message.turtles)
+                shared.hudFuncs.updateTurtles(message.turtles)
                 break
             case 'blocks':
-                shared.threeFuncs.setBlocks(message.blocks)
+                shared.threeFuncs.updateBlocks(message.blocks)
                 break
         }
     }

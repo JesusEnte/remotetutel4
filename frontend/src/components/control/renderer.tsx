@@ -6,21 +6,21 @@ import type { Shared, Turtles } from "../control"
 import turtleglb from './assets/turtle/turtle.glb'
 
 interface RendererProps {
-    sharedRef: React.RefObject<Shared>,
-    style: React.CSSProperties,
+    sharedRef: React.RefObject<Shared>
+    style: React.CSSProperties
 }
 
 interface Block {
-    x: number,
-    y: number,
-    z: number,
+    x: number
+    y: number
+    z: number
     name: string | null
 }
 type Blocks = Record<string, Block>
 
 export interface ThreeFunctions {
-    setBlocks(blocks: Blocks): void,
-    setTurtles(turtles: Turtles): void,
+    updateBlocks(blocks: Blocks): void
+    updateTurtles(turtles: Turtles): void
     setTarget(turtle_id: string): void
 }
 
@@ -64,7 +64,7 @@ export default function Renderer(props: RendererProps){
             controls.target = new_model!.position
             camera.position.add(diff)
         }
-        function setBlocks(blocks: Blocks): void {
+        function updateBlocks(blocks: Blocks): void {
             for (const [key, block] of Object.entries(blocks)) {
                 //delete old block if existing
                 const old = scene.getObjectByName(`block ${key}`)
@@ -91,26 +91,31 @@ export default function Renderer(props: RendererProps){
                 scene.add(cube)
             }
         }
-        function setTurtles(turtles: Turtles): void {
+        function updateTurtles(turtles: Turtles): void {
             for (const [id, turtle] of Object.entries(turtles)) {
-                if (turtle.status == 'unknown position') return
                 let model = scene.getObjectByName(`turtle ${id}`)
                 if (model) {
-                    //move camera along
-                    const old_pos = model.position.clone()
-                    const new_pos = new THREE.Vector3(turtle.x, turtle.y, turtle.z)
-                    const diff = new THREE.Vector3(new_pos.x - old_pos.x, new_pos.y - old_pos.y, new_pos.z - old_pos.z)
-                    camera.position.add(diff)
+                    if (turtle.status == 'unknown position'){
+                        scene.remove(model)
+                        return
+                    }
+                    if (turtle.id == shared.selectedTurtleId){
+                        //move camera along
+                        const old_pos = model.position.clone()
+                        const new_pos = new THREE.Vector3(turtle.x, turtle.y, turtle.z)
+                        const diff = new THREE.Vector3(new_pos.x - old_pos.x, new_pos.y - old_pos.y, new_pos.z - old_pos.z)
+                        camera.position.add(diff)
+                    }
                     //move existing turtle
                     model.position.set(turtle.x, turtle.y, turtle.z)
-                    model.rotation.y = 0.5 * Math.PI * (turtle.dir - 2)
+                    model.rotation.y = -(0.5 * Math.PI * (turtle.dir - 3))
                 } else {
                     //create new turtle
                     loader.load(turtleglb, (glb) => {
                         model = glb.scene.children[0]
                         model.name = `turtle ${id}`
                         model.position.set(turtle.x, turtle.y, turtle.z)
-                        model.rotation.y = 0.5 * Math.PI * (turtle.dir - 2)
+                        model.rotation.y = -(0.5 * Math.PI * (turtle.dir - 3))
                         scene.add(model)
                     })
                 }
@@ -122,7 +127,7 @@ export default function Renderer(props: RendererProps){
         shared.camera = camera
         shared.renderer = renderer
         shared.controls = controls
-        shared.threeFuncs = {setBlocks, setTurtles, setTarget}
+        shared.threeFuncs = {updateBlocks, updateTurtles, setTarget}
     }, [])
 
     return <canvas style={props.style} ref={canvasRef}/>

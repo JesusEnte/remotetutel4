@@ -11,6 +11,17 @@ class Turtle:
         self.fuel = fuel
         self.status = self.get_status()
 
+    def to_jsonable_dict(self):
+        return {
+            'id': self.id, 
+            'x': self.x, 
+            'y': self.y, 
+            'z': self.z, 
+            'dir': self.dir, 
+            'fuel': self.fuel, 
+            'status': self.status
+        }
+
     def set_websocket(self, ws):
         self.ws = ws
         self.status = self.get_status()
@@ -40,7 +51,7 @@ class TurtleCollection:
     def to_jsonable_dict(self) -> dict:
         jsonable_dict = {}
         for k, v in self.turtles.items():
-            jsonable_dict[k] = {'id': v.id, 'x': v.x, 'y': v.y, 'z': v.z, 'dir': v.dir, 'fuel': v.fuel, 'status': v.status}
+            jsonable_dict[k] = v.to_jsonable_dict()
         return jsonable_dict
     
     def from_jsonable_dict(self, jsonable_dict):
