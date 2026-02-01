@@ -1,6 +1,6 @@
 SERVER_URL = '' -- empty cuz template
 
-websocket_url = string.format('ws://%s/ws/turtles', SERVER_URL)
+websocket_url = string.format('%s/ws/turtles', SERVER_URL)
 websocket = nil
 
 function main()

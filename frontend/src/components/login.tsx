@@ -3,7 +3,7 @@ import logo from '/tutel.ico'
 
 function connectWebsocketBackend(password: String, setWebsocket: (ws: WebSocket | null) => void, setError: (error: String) => void){
   let has_connected = false
-  const ws = new WebSocket('http://127.0.0.1:5000/ws/frontends')
+  const ws = new WebSocket(`${window.location}ws/frontends`)
 
   ws.onmessage = (ev: MessageEvent) => {
     const msg = JSON.parse(ev.data)
