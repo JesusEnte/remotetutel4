@@ -18,6 +18,29 @@ interface Slot {
 }
 type Inventory = Record<number, Slot>
 
+function ATJ(props: any){
+    const defaultValue = props.defaultValue
+
+    return <input
+        type='text'
+        style={{
+            border: '0px',
+            borderRadius: '5px',
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            margin: 0,
+            padding: 0,
+            width: `${defaultValue.length + 1}ch`,
+            textAlign: 'center'
+        }}
+        {...props}
+        onInput={(ev: React.InputEvent<HTMLInputElement>) => {
+            const target = ev.target as HTMLInputElement
+            target.style.width = `${target.value.length + 1}ch`
+            
+        }}
+    />
+}
+
 export default function Hud(props: HudProps){
     const shared = props.sharedRef.current
     const [selectedTurtleId, setSelectedTurtleId] = useState<string|null>(null)
@@ -29,6 +52,17 @@ export default function Hud(props: HudProps){
 
     const selectedTurtle = selectedTurtleId ? turtles[selectedTurtleId] : null
 
+    const infos = {x: '?', y: '?', z: '?', dir: '?', fuel: '?'}
+
+    if (selectedTurtle){
+        infos.x = selectedTurtle.x?.toString() || '?'
+        infos.y = selectedTurtle.y?.toString() || '?'
+        infos.z = selectedTurtle.z?.toString() || '?'
+        infos.dir = ['n', 'e', 's', 'w'][selectedTurtle.dir] || '?'
+        infos.fuel = selectedTurtle.fuel?.toString() || '?'
+    }
+
+
     return <>
         <div style={{
             ...props.style,
@@ -36,6 +70,9 @@ export default function Hud(props: HudProps){
             top: 0,
         }}>
             <select
+                style={{
+                    width: '100%'
+                }}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                     const id = e.target.value
                     setSelectedTurtleId(id)
@@ -49,7 +86,13 @@ export default function Hud(props: HudProps){
                 }
             </select>
             {selectedTurtle ? <p>
-                🌎 {selectedTurtle.x} {selectedTurtle.y} {selectedTurtle.z} 🧭 {['n', 'e', 's', 'w'][selectedTurtle.dir]} ⛽ {selectedTurtle.fuel ? selectedTurtle.fuel : '?'}
+                🌎&nbsp;
+                <ATJ defaultValue={infos.x}/>
+                &nbsp;<ATJ defaultValue={infos.y}/>
+                &nbsp;<ATJ defaultValue={infos.z}/>
+                &nbsp;🧭&nbsp;
+                <ATJ defaultValue={infos.dir}/>
+                &nbsp;⛽ {infos.fuel}
             </p> : null}
         </div>
 
