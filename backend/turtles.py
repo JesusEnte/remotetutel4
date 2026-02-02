@@ -12,6 +12,7 @@ class Turtle:
         self.status = self.get_status()
 
     def to_jsonable_dict(self):
+        self.status = self.get_status()
         return {
             'id': self.id, 
             'x': self.x, 
@@ -24,7 +25,6 @@ class Turtle:
 
     def set_websocket(self, ws):
         self.ws = ws
-        self.status = self.get_status()
 
     def get_status(self) -> str:
         if None in [self.x, self.y, self.z, self.dir]:

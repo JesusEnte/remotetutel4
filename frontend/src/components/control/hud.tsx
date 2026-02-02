@@ -1,5 +1,13 @@
 import type { Shared, Turtles } from "../control"
 import { useState } from "react"
+import forward_icon from './assets/forward_icon.png'
+import right_click_icon from './assets/right_click_icon.png'
+import left_icon from './assets/left_icon.png'
+import vertical_icon from './assets/vertical_icon.png'
+import right_icon from './assets/right_icon.png'
+import left_click_icon from './assets/left_click_icon.png'
+import back_icon from './assets/back_icon.png'
+import suck_icon from './assets/suck_icon.png'
 
 interface HudProps {
     sharedRef: React.RefObject<Shared>
@@ -105,6 +113,9 @@ export default function Hud(props: HudProps){
                     setSelectedTurtleId(id)
                     shared.threeFuncs.setTarget(id)
                 }}
+                onClick={() => {
+                    ws.send(JSON.stringify({type: 'get turtles'}))
+                }}
             >
                 {[<option disabled={selectedTurtleId != null} key=''>-- select a Tutel --</option>].concat(
                     Array.from(Object.entries(turtles)).map(([id, turtle]) => {
@@ -131,12 +142,28 @@ export default function Hud(props: HudProps){
             <button>tr</button>
         </div>
 
+        {selectedTurtle?.status == 'online' ? 
         <div style={{
             ...props.style,
-            right: 0,
-            bottom: 0,
+            right: '1%',
+            bottom: '1%',
+            aspectRatio: 1/1,
+            display: 'grid',
+            gridTemplateRows: '1fr 1fr 1fr',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            height: '30svh',
+            justifyItems: 'center',
+            alignItems: 'center'
         }}>
-            <button>br</button>
-        </div>
+            <div/>
+            <img style={{width: '100%'}} src={forward_icon}/>
+            <img style={{width: '60%'}} src={right_click_icon}/>
+            <img style={{width: '100%'}} src={left_icon}/>
+            <img style={{width: '60%'}} src={vertical_icon}/>
+            <img style={{width: '100%'}} src={right_icon}/>
+            <img style={{width: '60%'}} src={left_click_icon}/>
+            <img style={{width: '100%'}} src={back_icon}/>
+            <img style={{width: '60%'}} src={suck_icon}/>
+        </div> : null}
     </> 
 }

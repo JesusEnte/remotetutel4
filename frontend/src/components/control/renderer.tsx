@@ -22,6 +22,7 @@ export interface ThreeFunctions {
     updateBlocks(blocks: Blocks): void
     updateTurtles(turtles: Turtles): void
     setTarget(turtle_id: string): void
+    getCameraDirection(n: number): string
 }
 
 
@@ -121,13 +122,23 @@ export default function Renderer(props: RendererProps){
                 }
             }
         }
+        function getCameraDirection(n: 2 | 3): string {
+            const pitch = camera.getWorldDirection(new THREE.Vector3()).y
+            if (n == 2){
+                return pitch < 0 ? 'down' : 'up'
+            } else {
+                if (pitch < -0.7) return 'down'
+                if (pitch > 0.4) return 'up'
+                return 'normal'
+            }
+        }
         
         //pass stuff to control component
         shared.scene = scene
         shared.camera = camera
         shared.renderer = renderer
         shared.controls = controls
-        shared.threeFuncs = {updateBlocks, updateTurtles, setTarget}
+        shared.threeFuncs = {updateBlocks, updateTurtles, setTarget, getCameraDirection}
     }, [])
 
     return <canvas style={props.style} ref={canvasRef}/>
