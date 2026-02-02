@@ -51,7 +51,7 @@ def wget_startup():
         #Change SERVER_URL in template
         file = template.read()
         prot = os.getenv('SSL', 'false') == 'true' and 'https' or 'http'
-        url = f'{prot}://{os.getenv('HOST', '127.0.0.1')}:{os.getenv('PORT', 80)}'
+        url = f'{prot}://{os.getenv('URL', '127.0.0.1:80')}/'
         file = file.replace('SERVER_URL = \'\'', f'SERVER_URL = \'{url}\'', 1)
         return file
     
@@ -61,7 +61,7 @@ def wget_remotetutel():
         #Change SERVER_URL in template
         file = template.read()
         prot = os.getenv('SSL', 'false') == 'true' and 'wss' or 'ws'
-        url = f'{prot}://{os.getenv('HOST', '127.0.0.1')}:{os.getenv('PORT', 80)}'
+        url = f'{prot}://{os.getenv('URL', '127.0.0.1:80')}/'
         file = file.replace('SERVER_URL = \'\'', f'SERVER_URL = \'{url}\'', 1)
         return file
 
@@ -96,5 +96,5 @@ def after_app():
 
 if __name__ == '__main__':
     before_app()
-    app.run(host='0.0.0.0', port=os.getenv('PORT') or 80)
+    app.run(host='0.0.0.0', port=os.getenv('INTERNAL_PORT') or 80)
     after_app()
