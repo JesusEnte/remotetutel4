@@ -1,4 +1,5 @@
 import json
+from backend.blocks import BlockCollection
 
 class Turtle:
     def __init__(self, id, x=None, y=None, z=None, dir=None, fuel=None, ws=None):
@@ -22,6 +23,12 @@ class Turtle:
             'fuel': self.fuel, 
             'status': self.status
         }
+    
+    def update_info(self, info: dict):
+        for k, v in info.items():
+            setattr(self, k, v)
+        self.status = self.get_status()
+    
 
     def set_websocket(self, ws):
         self.ws = ws
@@ -33,6 +40,24 @@ class Turtle:
             return 'online'
         else:
             return 'offline'
+    
+    def eval(self, lua_code: str):
+        self.ws.send(json.dumps({'type': 'eval', 'code': lua_code}))
+        response = json.loads(self.ws.receive())
+        if response.get('type') != 'eval': return
+        if response.get('error', None) is not None:
+            print(response.get('error'))
+            return 'error'
+        return response.get('data')
+
+    def go(self, direction, user):
+        match (direction):
+            case 'forward' | 'back' | 'up' | 'down':
+                print(self.eval(f'return turtle.{direction}()'))
+            case 'left':
+                print(self.eval(f'return turtle.turnLeft()'))
+            case 'right':
+                print(self.eval(f'return turtle.turnRight()'))
         
 class TurtleCollection:
     def __init__(self):

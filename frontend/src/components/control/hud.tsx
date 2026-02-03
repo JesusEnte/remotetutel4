@@ -117,7 +117,7 @@ export default function Hud(props: HudProps){
                     ws.send(JSON.stringify({type: 'get turtles'}))
                 }}
             >
-                {[<option disabled={selectedTurtleId != null} key=''>-- select a Tutel --</option>].concat(
+                {[<option disabled={selectedTurtleId != null}>-- select a Tutel --</option>].concat(
                     Array.from(Object.entries(turtles)).map(([id, turtle]) => {
                         return <option key={id} value={id}>#{id}: {turtle.status}</option>
                     }))
@@ -156,14 +156,14 @@ export default function Hud(props: HudProps){
             alignItems: 'center'
         }}>
             <div/>
-            <img style={{width: '100%'}} src={forward_icon}/>
-            <img style={{width: '60%'}} src={right_click_icon}/>
-            <img style={{width: '100%'}} src={left_icon}/>
-            <img style={{width: '60%'}} src={vertical_icon}/>
-            <img style={{width: '100%'}} src={right_icon}/>
-            <img style={{width: '60%'}} src={left_click_icon}/>
-            <img style={{width: '100%'}} src={back_icon}/>
-            <img style={{width: '60%'}} src={suck_icon}/>
+            <img style={{width: '100%'}} src={forward_icon} onClick={() => {ws.send(JSON.stringify({type: 'go', direction: 'forward', id: selectedTurtleId}))}}/>
+            <img style={{width: '60%'}} src={right_click_icon} onClick={() => {ws.send(JSON.stringify({type: 'right click', direction: shared.threeFuncs.getCameraDirection(3), id: selectedTurtleId}))}}/>
+            <img style={{width: '100%'}} src={left_icon} onClick={() => {ws.send(JSON.stringify({type: 'go', direction: 'left', id: selectedTurtleId}))}}/>
+            <img style={{width: '60%'}} src={vertical_icon} onClick={() => {ws.send(JSON.stringify({type: 'go', direction: shared.threeFuncs.getCameraDirection(2), id: selectedTurtleId}))}}/>
+            <img style={{width: '100%'}} src={right_icon} onClick={() => {ws.send(JSON.stringify({type: 'go', direction: 'right', id: selectedTurtleId}))}}/>
+            <img style={{width: '60%'}} src={left_click_icon} onClick={() => {ws.send(JSON.stringify({type: 'left click', direction: shared.threeFuncs.getCameraDirection(3), id: selectedTurtleId}))}}/>
+            <img style={{width: '100%'}} src={back_icon} onClick={() => {ws.send(JSON.stringify({type: 'go', direction: 'back', id: selectedTurtleId}))}}/>
+            <img style={{width: '60%'}} src={suck_icon} onClick={() => {ws.send(JSON.stringify({type: 'suck', direction: 'all', id: selectedTurtleId}))}}/>
         </div> : null}
     </> 
 }

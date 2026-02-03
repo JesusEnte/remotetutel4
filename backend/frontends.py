@@ -8,21 +8,30 @@ class User:
     def __init__(self, ws: simple_websocket.Server = None):
         self.ws = ws
 
+    def update_turtles(self, turtles: TurtleCollection):
+        self.ws.send(json.dumps({'type': 'turtles', 'turtles': turtles.to_jsonable_dict()}))
+    
+    def update_blocks(self, blocks: BlockCollection):
+        self.ws.send(json.dumps({'type': 'blocks', 'blocks': blocks.to_jsonable_dict()}))
+
     def on_message(self, message, turtles: TurtleCollection, blocks: BlockCollection):
         if message.get('type') is None:
             return
+
+        turtle = turtles.get(message.get('id'))
+            
         match (message['type']):
             case 'get turtles':
-                self.ws.send(json.dumps({'type': 'turtles', 'turtles': turtles.to_jsonable_dict()}))
+                self.update_turtles(turtles)
             case 'get blocks':
-                self.ws.send(json.dumps({'type': 'blocks', 'blocks': blocks.to_jsonable_dict()}))
+                self.update_blocks(blocks)
             case 'update info':
-                turtle = turtles.get(message['id'])
-                for k, v in message['info'].items():
-                    setattr(turtle, k, v)
-                    print(k, v)
-                turtle.status = turtle.get_status()
+                turtle.update_info(message.get('info', {}))
                 self.ws.send(json.dumps({'type': 'turtles', 'turtles': {turtle.id: turtle.to_jsonable_dict()}}))
+            case 'go':
+                turtle.go(message.get('direction'), self)
+            case _:
+                print(message)
 
 def frontend_connection_handler(ws, user, turtles: TurtleCollection, blocks: BlockCollection):
     message = json.loads(ws.receive())
