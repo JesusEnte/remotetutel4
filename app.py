@@ -52,7 +52,7 @@ def wget_startup():
         file = template.read()
         prot = os.getenv('SSL', 'false') == 'true' and 'https' or 'http'
         url = f'{prot}://{os.getenv('URL', '127.0.0.1:80')}/'
-        file = file.replace('SERVER_URL = \'\'', f'SERVER_URL = \'{url}\'', 1)
+        file = file.replace('SERVER_URL = \'\' --empty cuz template', f'SERVER_URL = \'{url}\'', 1)
         return file
     
 @app.route('/remotetutel.lua')
@@ -62,7 +62,7 @@ def wget_remotetutel():
         file = template.read()
         prot = os.getenv('SSL', 'false') == 'true' and 'wss' or 'ws'
         url = f'{prot}://{os.getenv('URL', '127.0.0.1:80')}/'
-        file = file.replace('SERVER_URL = \'\'', f'SERVER_URL = \'{url}\'', 1)
+        file = file.replace('SERVER_URL = \'\' --empty cuz template', f'SERVER_URL = \'{url}\'', 1)
         return file
 
 
