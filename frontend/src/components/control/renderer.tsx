@@ -15,6 +15,7 @@ interface Block {
     y: number
     z: number
     name: string | null
+    color: number
 }
 type Blocks = Record<string, Block>
 
@@ -72,14 +73,7 @@ export default function Renderer(props: RendererProps){
                 if (old) scene.remove(old)
                 //dont render new one if name is none
                 if (block.name == null) return
-                //color hashing
-                var hash: number = 0;
-                for (var i = 0; i < block.name.length; i++) {
-                    hash = 31 * hash + block.name.charCodeAt(i);
-                }
-                hash & 0xFFFFFFFF
-                const hue = hash % 359
-                const color = new THREE.Color(`hsl(${hue}, 100%, 50%)`)
+                const color = new THREE.Color(`rgb(${block.color >> 16 & 255}, ${block.color >> 8 & 255}, ${block.color & 255})`)
                 const geometry = new THREE.BoxGeometry(1, 1, 1)
                 const edges = new THREE.EdgesGeometry(geometry)
                 const lines = new THREE.LineSegments(edges, new THREE.MeshBasicMaterial({color: 'black'}))

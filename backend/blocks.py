@@ -1,11 +1,12 @@
 import json
 
 class Block:
-    def __init__(self, x, y, z, name):
+    def __init__(self, x, y, z, name, color):
         self.x = x
         self.y = y
         self.z = z
         self.name = name
+        self.color = color
 
 class BlockCollection:
     def __init__(self):
@@ -14,9 +15,9 @@ class BlockCollection:
     def __key(self, x, y, z) -> str:
         return f'{x}/{y}/{z}'
 
-    def add(self, x, y, z, name):
+    def add(self, x, y, z, name, color):
         key = self.__key(x, y, z)
-        self.blocks[key] = Block(x, y, z, name)
+        self.blocks[key] = Block(x, y, z, name, color)
 
     def get(self, x, y, z) -> Block | None:
         key = self.__key(x, y, z)
@@ -30,7 +31,7 @@ class BlockCollection:
     def to_jsonable_dict(self) -> dict:
         jsonable_dict = {}
         for k, v in self.blocks.items():
-            jsonable_dict[k] = {'x': v.x, 'y': v.y, 'z': v.z, 'name': v.name}
+            jsonable_dict[k] = {'x': v.x, 'y': v.y, 'z': v.z, 'name': v.name, 'color': v.color}
         return jsonable_dict
     
     def from_jsonable_dict(self, jsonable_dict):
