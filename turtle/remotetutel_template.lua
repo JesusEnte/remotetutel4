@@ -35,8 +35,8 @@ status, err = pcall(function()
         msg = textutils.unserialiseJSON(msg)
 
         --check essentials
-        if not msg.type or msg.type ~= 'eval' then return end 
-        if not msg.code then return end
+        if not msg.type or msg.type ~= 'eval' then goto continue end 
+        if not msg.code then goto continue end
             
         --eval code
         func = load(msg.code)
@@ -45,7 +45,7 @@ status, err = pcall(function()
         --message on eval error
         if not result[1] then
             websocket.send(textutils.serialiseJSON({type='eval', error=result[2]}))
-            return
+            goto continue
         end
 
         --jsonify actual data
@@ -54,12 +54,13 @@ status, err = pcall(function()
         --message on json error
         if not json_result[1] then
             websocket.send(textutils.serialiseJSON({type='eval', error="JSON Error:" .. json_result[2]}))
-            return
+            goto continue
         end
 
         --message when everything went right
         websocket.send(json_result[2])
-        return
+        
+        ::continue::
     
     end
 
