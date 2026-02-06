@@ -117,20 +117,20 @@ export default function Hud(props: HudProps){
                     ws.send(JSON.stringify({type: 'get turtles'}))
                 }}
             >
-                {[<option disabled={selectedTurtleId != null}>-- select a Tutel --</option>].concat(
+                {[<option disabled={selectedTurtleId != null} key={'disabled'}>-- select a Tutel --</option>].concat(
                     Array.from(Object.entries(turtles)).map(([id, turtle]) => {
-                        return <option key={id} value={id}>#{id}: {turtle.status}</option>
+                        return <option key={`${id}${turtle.status}`} value={id}>#{id}: {turtle.status}</option>
                     }))
                 }
             </select>
-            {selectedTurtle ? <p key={selectedTurtleId}>
+            {selectedTurtle ? <p>
                 🌎
-                <ATI defaultValue={infos.x} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'x')}}/>
-                &nbsp;<ATI defaultValue={infos.y} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'y')}}/>
-                &nbsp;<ATI defaultValue={infos.z} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'z')}}/>
+                <ATI defaultValue={infos.x} key={infos.x} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'x')}}/>
+                &nbsp;<ATI defaultValue={infos.y} key={infos.y} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'y')}}/>
+                &nbsp;<ATI defaultValue={infos.z} key={infos.z} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'z')}}/>
                 &nbsp;🧭
-                <ATI defaultValue={infos.dir} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'dir')}}/>
-                &nbsp;⛽ {infos.fuel}
+                <ATI defaultValue={infos.dir} key={infos.dir} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'dir')}}/>
+                &nbsp;⛽ <span key={infos.fuel}>{infos.fuel}</span>
             </p> : null}
         </div>
 

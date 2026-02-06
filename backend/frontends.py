@@ -1,7 +1,7 @@
 import json
 import os
 import simple_websocket
-from backend.turtles import TurtleCollection
+from backend.turtles import TurtleCollection, Turtle
 from backend.blocks import BlockCollection
 
 class User:
@@ -10,6 +10,9 @@ class User:
 
     def update_turtles(self, turtles: TurtleCollection):
         self.ws.send(json.dumps({'type': 'turtles', 'turtles': turtles.to_jsonable_dict()}))
+
+    def update_turtle(self, turtle: Turtle):
+        self.ws.send(json.dumps({'type': 'turtles', 'turtles': {turtle.id: turtle.to_jsonable_dict()}}))
     
     def update_blocks(self, blocks: BlockCollection):
         self.ws.send(json.dumps({'type': 'blocks', 'blocks': blocks.to_jsonable_dict()}))
@@ -29,7 +32,9 @@ class User:
                 turtle.update_info(message.get('info', {}))
                 self.ws.send(json.dumps({'type': 'turtles', 'turtles': {turtle.id: turtle.to_jsonable_dict()}}))
             case 'go':
-                turtle.go(message.get('direction'), self)
+                block_changes = turtle.go(message['direction'], blocks)
+                self.update_blocks(block_changes)
+                self.update_turtle(turtle)
             case _:
                 print(message)
 

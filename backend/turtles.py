@@ -49,15 +49,90 @@ class Turtle:
             print(response.get('error'))
             return 'error'
         return response.get('data')
+    
+    def forwards_math(self, distance) -> dict:
+        match (self.dir):
+            case 0: #North
+                return {'x': self.x, 'y': self.y, 'z': self.z - distance}
+            case 1: #East
+                return {'x': self.x + distance, 'y': self.y, 'z': self.z}
+            case 2: #South
+                return {'x': self.x, 'y': self.y, 'z': self.z + distance}
+            case 3: #West
+                return {'x': self.x - distance, 'y': self.y, 'z': self.z}
+    
+    def update_blocks(self, blocks: BlockCollection) -> BlockCollection:
+        blocks_dict = self.eval("""
+            inspect = {
+                {turtle.inspectUp()},
+                {turtle.inspect()},
+                {turtle.inspectDown()}
+            }
+            for i, v in ipairs(inspect) do
+                if v[1] then
+                    inspect[i] = {name = v[2]['name'], color = v[2]['mapColor']}
+                else
+                    inspect[i] = {}
+                end
+            end
+            return {
+                top = inspect[1],
+                front = inspect[2],
+                bottom = inspect[3]
+            }
+        """)[0]
+        updated_blocks = BlockCollection()
+        front_coords = self.forwards_math(1)
+        #top / front / bottom coordinate stuff
+        if blocks_dict['top']:
+            blocks.add(self.x, self.y + 1, self.z, blocks_dict['top']['name'], blocks_dict['top']['color'])
+            updated_blocks.add(self.x, self.y + 1, self.z, blocks_dict['top']['name'], blocks_dict['top']['color'])
+        else:
+            blocks.remove(self.x, self.y + 1, self.z)
+            updated_blocks.add(self.x, self.y + 1, self.z, None, None)
+        if blocks_dict['front']:
+            blocks.add(name=blocks_dict['front']['name'], color=blocks_dict['front']['color'], **front_coords)
+            updated_blocks.add(name=blocks_dict['front']['name'], color=blocks_dict['front']['color'], **front_coords)
+        else:
+            blocks.remove(**front_coords)
+            updated_blocks.add(name=None, color=None, **front_coords)
+        if blocks_dict['bottom']:
+            blocks.add(self.x, self.y - 1, self.z, blocks_dict['bottom']['name'], blocks_dict['bottom']['color'])
+            updated_blocks.add(self.x, self.y - 1, self.z, blocks_dict['bottom']['name'], blocks_dict['bottom']['color'])
+        else:
+            blocks.remove(self.x, self.y - 1, self.z)
+            updated_blocks.add(self.x, self.y - 1, self.z, None, None)
+        #own position
+        blocks.remove(self.x, self.y, self.z)
+        updated_blocks.add(self.x, self.y, self.z, None, None)
 
-    def go(self, direction, user):
+        return updated_blocks
+
+    def go(self, direction, blocks: BlockCollection) -> BlockCollection:
         match (direction):
             case 'forward' | 'back' | 'up' | 'down':
-                print(self.eval(f'return turtle.{direction}()'))
+                success = self.eval(f'return turtle.{direction}()')[0]
             case 'left':
-                print(self.eval(f'return turtle.turnLeft()'))
+                success = self.eval(f'return turtle.turnLeft()')[0]
             case 'right':
-                print(self.eval(f'return turtle.turnRight()'))
+                success = self.eval(f'return turtle.turnRight()')[0]
+        if success:
+            match (direction):
+                case 'forward':
+                    new_pos = self.forwards_math(1)
+                    self.x, self.y, self.z = new_pos.values()
+                case 'back':
+                    new_pos = self.forwards_math(-1)
+                    self.x, self.y, self.z = new_pos.values()
+                case 'up':
+                    self.y += 1
+                case 'down':
+                    self.y -= 1
+                case 'left':
+                    self.dir = (self.dir - 1) % 4
+                case 'right':
+                    self.dir = (self.dir + 1) % 4
+        return self.update_blocks(blocks)
         
 class TurtleCollection:
     def __init__(self):

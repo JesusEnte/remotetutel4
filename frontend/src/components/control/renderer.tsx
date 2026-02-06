@@ -72,12 +72,12 @@ export default function Renderer(props: RendererProps){
                 const old = scene.getObjectByName(`block ${key}`)
                 if (old) scene.remove(old)
                 //dont render new one if name is none
-                if (block.name == null) return
+                if (block.name == null) continue
                 const color = new THREE.Color(`rgb(${block.color >> 16 & 255}, ${block.color >> 8 & 255}, ${block.color & 255})`)
                 const geometry = new THREE.BoxGeometry(1, 1, 1)
                 const edges = new THREE.EdgesGeometry(geometry)
                 const lines = new THREE.LineSegments(edges, new THREE.MeshBasicMaterial({color: 'black'}))
-                const material = new THREE.MeshBasicMaterial({color: color})
+                const material = new THREE.MeshBasicMaterial({color: color, transparent: true, opacity: 0.75})
                 const cube = new THREE.Mesh(geometry, material)
                 cube.add(lines)
                 cube.position.set(block.x, block.y, block.z)
