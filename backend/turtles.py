@@ -107,11 +107,15 @@ class Turtle:
         updated_blocks.add(self.x, self.y, self.z, None, None)
 
         return updated_blocks
+    
+    def update_fuel(self):
+        self.fuel = self.eval("return turtle.getFuelLevel()")
 
     def go(self, direction, blocks: BlockCollection) -> BlockCollection:
         match (direction):
             case 'forward' | 'back' | 'up' | 'down':
                 success = self.eval(f'return turtle.{direction}()')[0]
+                self.update_fuel()
             case 'left':
                 success = self.eval(f'return turtle.turnLeft()')[0]
             case 'right':

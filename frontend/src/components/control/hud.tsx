@@ -123,14 +123,14 @@ export default function Hud(props: HudProps){
                     }))
                 }
             </select>
-            {selectedTurtle ? <p>
+            {selectedTurtle ? <p key={`${infos.x}${infos.y}${infos.z}${infos.dir}${infos.fuel}`}>
                 🌎
-                <ATI defaultValue={infos.x} key={infos.x} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'x')}}/>
-                &nbsp;<ATI defaultValue={infos.y} key={infos.y} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'y')}}/>
-                &nbsp;<ATI defaultValue={infos.z} key={infos.z} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'z')}}/>
+                <ATI defaultValue={infos.x} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'x')}}/>
+                &nbsp;<ATI defaultValue={infos.y} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'y')}}/>
+                &nbsp;<ATI defaultValue={infos.z} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'z')}}/>
                 &nbsp;🧭
-                <ATI defaultValue={infos.dir} key={infos.dir} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'dir')}}/>
-                &nbsp;⛽ <span key={infos.fuel}>{infos.fuel}</span>
+                <ATI defaultValue={infos.dir} onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {onEnterATI(ev, 'dir')}}/>
+                &nbsp;⛽{infos.fuel}
             </p> : null}
         </div>
 
