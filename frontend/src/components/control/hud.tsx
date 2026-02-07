@@ -8,6 +8,8 @@ import right_icon from './assets/right_icon.png'
 import left_click_icon from './assets/left_click_icon.png'
 import back_icon from './assets/back_icon.png'
 import suck_icon from './assets/suck_icon.png'
+import inventory_icon from './assets/inventory_icon.png'
+import menu_icon from './assets/menu_icon.png'
 
 interface HudProps {
     sharedRef: React.RefObject<Shared>
@@ -60,6 +62,7 @@ export default function Hud(props: HudProps){
         }
         _setTurtles(clone)
     }
+    const [showInventory, toggleInventory] = useState<boolean>(false)
     const [inventory, setInventory] = useState<Inventory>({})
     console.log(inventory)
     shared.selectedTurtleId = selectedTurtleId
@@ -138,8 +141,11 @@ export default function Hud(props: HudProps){
             ...props.style,
             right: 0,
             top: 0,
+            aspectRatio: 1/2,
+            height: '10svh'
         }}>
-            <button>tr</button>
+            <img src={menu_icon} style={{width: '100%'}}/>
+            <img src={inventory_icon} style={{width: '100%'}} onClick={() => {toggleInventory(!showInventory)}}/>
         </div>
 
         {selectedTurtle?.status == 'online' ? 
@@ -165,5 +171,5 @@ export default function Hud(props: HudProps){
             <img style={{width: '100%'}} src={back_icon} onClick={() => {ws.send(JSON.stringify({type: 'go', direction: 'back', id: selectedTurtleId}))}}/>
             <img style={{width: '60%'}} src={suck_icon} onClick={() => {ws.send(JSON.stringify({type: 'suck', direction: 'all', id: selectedTurtleId}))}}/>
         </div> : null}
-    </> 
+    </>
 }

@@ -47,7 +47,7 @@ export default function LoginPage(props: LoginPageProps){
     margin: '0',
     textAlign: 'center'
   }}>
-    <h1 style={{alignContent: 'center'}}>Remotetutel4 <img src={logo}></img></h1>
+    <h1>Remotetutel4 <img src={logo}></img></h1>
     <input 
     type='password' 
     placeholder='Password'
