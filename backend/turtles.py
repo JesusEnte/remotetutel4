@@ -62,6 +62,9 @@ class Turtle:
                 return {'x': self.x - distance, 'y': self.y, 'z': self.z}
     
     def update_blocks(self, blocks: BlockCollection) -> BlockCollection:
+        """
+        Updates the given BlockCollection and also returns a BlockCollection of only the updated blocks
+        """
         blocks_dict = self.eval("""
             inspect = {
                 {turtle.inspectUp()},
@@ -136,6 +139,26 @@ class Turtle:
                     self.dir = (self.dir - 1) % 4
                 case 'right':
                     self.dir = (self.dir + 1) % 4
+        return self.update_blocks(blocks)
+
+    def right_click(self, direction: str, blocks: BlockCollection) -> BlockCollection:
+        match (direction):
+            case 'normal':
+                self.eval("turtle.place()")
+            case 'up':
+                self.eval("turtle.placeUp()")
+            case 'down':
+                self.eval("turtle.placeDown()")
+        return self.update_blocks(blocks)
+    
+    def left_click(self, direction: str, blocks: BlockCollection) -> BlockCollection:
+        match (direction):
+            case 'normal':
+                self.eval("turtle.dig() turtle.attack()")
+            case 'up':
+                self.eval("turtle.digUp() turtle.attackUp()")
+            case 'down':
+                self.eval("turtle.digDown() turtle.attackDown()")
         return self.update_blocks(blocks)
         
 class TurtleCollection:

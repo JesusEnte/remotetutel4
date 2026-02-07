@@ -35,6 +35,12 @@ class User:
                 block_changes = turtle.go(message['direction'], blocks)
                 self.update_blocks(block_changes)
                 self.update_turtle(turtle)
+            case 'right click':
+                block_changes = turtle.right_click(message['direction'], blocks)
+                self.update_blocks(block_changes)
+            case 'left click':
+                block_changes = turtle.left_click(message['direction'], blocks)
+                self.update_blocks(block_changes)
             case _:
                 print(message)
 
