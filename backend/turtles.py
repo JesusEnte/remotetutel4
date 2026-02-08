@@ -171,6 +171,46 @@ class Turtle:
                 self.eval("turtle.suck()")
             case 'down':
                 self.eval("turtle.suckDown()")
+
+    def get_inventories(self, direction: str) -> dict:
+        inspect = {'up': 'inspectUp', 'normal': 'inspect', 'down': 'inspectDown'}[direction]
+        direction = {'up': 'top', 'normal': 'front', 'down': 'bottom'}[direction]
+
+        return self.eval(f"""
+            inventories = {{}}
+                        
+            own = {{}}
+            l = turtle.getEquippedLeft()
+            l = l and {{name = l.name, n = l.count}} or {{}}
+            own.left = l
+            r = turtle.getEquippedRight()
+            r = r and {{name = r.name, n = r.count}} or {{}}
+            own.right = r
+            for i=1,16 do
+                item = turtle.getItemDetail(i)
+                item = item and {{name = item.name, n = item.count}} or {{}}
+                own[tostring(i)] = item
+            end
+            inventories.turtle = own
+                        
+            p = {{}}
+            size = peripheral.call('{direction}', 'size') 
+            if size == nil then
+                inventories.peripheral = p
+                return inventories
+            end
+            
+            p.name = {{turtle.{inspect}()}}
+            p.name = p.name[2].name
+            for i=1, size do
+                item = peripheral.call('{direction}', 'getItemDetail', i)
+                item = item and {{name = item.name, n = item.count}} or {{}}
+                p[tostring(i)] = item
+            end
+            inventories.peripheral = p
+            return inventories
+
+        """)[0]
         
 class TurtleCollection:
     def __init__(self):

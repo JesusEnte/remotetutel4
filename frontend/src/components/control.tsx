@@ -57,6 +57,8 @@ export default function ControlPage(props: ControlPageProps){
             case 'blocks':
                 shared.threeFuncs.updateBlocks(message.blocks)
                 break
+            case 'inventories':
+                console.log(message.inventories)
         }
     }
 

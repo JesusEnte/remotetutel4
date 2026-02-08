@@ -62,7 +62,6 @@ export default function Hud(props: HudProps){
         }
         _setTurtles(clone)
     }
-    const [showInventory, toggleInventory] = useState<boolean>(false)
     const [inventory, setInventory] = useState<Inventory>({})
     console.log(inventory)
     shared.selectedTurtleId = selectedTurtleId
@@ -145,7 +144,9 @@ export default function Hud(props: HudProps){
             height: '10svh'
         }}>
             <img src={menu_icon} style={{width: '100%'}}/>
-            <img src={inventory_icon} style={{width: '100%'}} onClick={() => {toggleInventory(!showInventory)}}/>
+            {selectedTurtle?.status == 'online' ?
+                <img src={inventory_icon} style={{width: '100%'}} onClick={() => {ws.send(JSON.stringify({type: 'get inventories', direction: shared.threeFuncs.getCameraDirection(3), id: selectedTurtleId}))}}/>
+            : null}
         </div>
 
         {selectedTurtle?.status == 'online' ? 
