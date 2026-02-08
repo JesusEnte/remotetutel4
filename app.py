@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import os
 import gevent
 import json
+import signal
+import sys
 
 from backend.turtles import TurtleCollection, turtle_connection_handler
 from backend.blocks import BlockCollection 
@@ -70,6 +72,7 @@ def wget_remotetutel():
 
 def before_app():
     #load blocks
+    print('Loading blocks...')
     try:
         with open('saves/blocks.json', 'r') as file:
             json_string = file.read()
@@ -77,6 +80,7 @@ def before_app():
     except FileNotFoundError:
         print('No blocks.json save file found')
     #load turtles
+    print('Loading turtles...')
     try:
         with open('saves/turtles.json', 'r') as file:
             json_string = file.read()
@@ -84,17 +88,24 @@ def before_app():
     except FileNotFoundError:
         print('No turtles.json save file found')
 
-def after_app():
+def after_app(*args):
     #save blocks
+    print('Saving blocks...')
     with open('saves/blocks.json', 'w') as file:
         json_string = json.dumps(blocks.to_jsonable_dict())
         file.write(json_string)
+        print('Saved blocks')
     #save turtles
+    print('Saving turtles...')
     with open('saves/turtles.json', 'w') as file:
         json_string = json.dumps(turtles.to_jsonable_dict())
         file.write(json_string)
+        print('Saved turtles')
+    print('Terminated')
+    sys.exit(0)
 
 if __name__ == '__main__':
     before_app()
+    signal.signal(signal.SIGTERM, after_app)
+    signal.signal(signal.SIGINT, after_app)
     app.run(host='0.0.0.0', port=os.getenv('INTERNAL_PORT') or 80)
-    after_app()
