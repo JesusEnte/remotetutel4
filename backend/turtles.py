@@ -160,6 +160,17 @@ class Turtle:
             case 'down':
                 self.eval("turtle.digDown() turtle.attackDown()")
         return self.update_blocks(blocks)
+    
+    def suck(self, direction: str):
+        match (direction):
+            case 'all':
+                self.eval("turtle.suck() turtle.suckUp() turtle.suckDown()")
+            case 'up':
+                self.eval("turtle.suckUp()")
+            case 'normal':
+                self.eval("turtle.suck()")
+            case 'down':
+                self.eval("turtle.suckDown()")
         
 class TurtleCollection:
     def __init__(self):

@@ -41,6 +41,8 @@ class User:
             case 'left click':
                 block_changes = turtle.left_click(message['direction'], blocks)
                 self.update_blocks(block_changes)
+            case 'suck':
+                turtle.suck(message['direction'])
             case _:
                 print(message)
 
