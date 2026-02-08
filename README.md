@@ -16,3 +16,11 @@ You'll also want to take a look at the `.env.example` file and create your own `
 
 ## Start
 Finally you'll just want to run the app.py file
+
+## Docker
+When you use Docker, make sure to use to -p flag to listen to the set ports and use -v to assign a volume to the /usr/src/app/saves path  
+Then things might look like something this:  
+```
+docker build --tag=remotetutel .
+docker run --rm -p 80:80 -v mysaves:/usr/src/app/saves remotetutel 
+```
