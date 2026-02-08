@@ -112,7 +112,7 @@ class Turtle:
         return updated_blocks
     
     def update_fuel(self):
-        self.fuel = self.eval("return turtle.getFuelLevel()")
+        self.fuel = self.eval("return turtle.getFuelLevel()")[0]
 
     def go(self, direction, blocks: BlockCollection) -> BlockCollection:
         match (direction):
