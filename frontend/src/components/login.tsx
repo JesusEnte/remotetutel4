@@ -1,42 +1,13 @@
 import logo from '/tutel.ico'
+import useBackendWebsocket from '../hooks/use-backend-websocket'
 
-
-function connectWebsocketBackend(password: String, setWebsocket: (ws: WebSocket | null) => void, setError: (error: String) => void){
-  let has_connected = false
-  const ws = new WebSocket(`${window.location}ws/frontends`)
-
-  ws.onmessage = (ev: MessageEvent) => {
-    const msg = JSON.parse(ev.data)
-    if (msg.type! == 'authentication' && msg.status! == 'success'){
-      setWebsocket(ws)
-      setError('')
-    }
-    else if (msg.type! == 'authentication' && msg.status == 'wrong password'){
-      setError('Incorrect Password')
-    }
-    else {
-      setError('Unknown Error')
-    }
-  }
-
-  ws.onclose = () => {
-    setWebsocket(null)
-    setError(has_connected ? 'Disconnected' : 'Server is offline')
-  }
-
-  ws.onopen = () => {
-    has_connected = true
-    ws!.send(JSON.stringify({type: 'authentication', password: password}))
-  }
+interface LoginProps {
+  setWebsocket: (ws: WebSocket|null) => void
+  error: string
+  setError: (error: string) => void
 }
 
-interface LoginPageProps {
-  setWebsocket: (ws: WebSocket|null) => void,
-  error: String,
-  setError: (error: String) => void
-}
-
-export default function LoginPage(props: LoginPageProps){
+export default function Login(props: LoginProps){
   return (
   <div
     style={{
@@ -48,13 +19,14 @@ export default function LoginPage(props: LoginPageProps){
     textAlign: 'center'
   }}>
     <h1>Remotetutel4 <img src={logo}></img></h1>
-    <input 
+    <input
     type='password' 
     placeholder='Password'
+    style={{margin: '30px'}}
     onKeyDown={(ev) => {
       if (ev.key == 'Enter'){
         const target = ev.target as HTMLInputElement
-        connectWebsocketBackend(target.value, props.setWebsocket, props.setError)
+        useBackendWebsocket(target.value, props.setWebsocket, props.setError)
       }
     }}
     />
