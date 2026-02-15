@@ -83,7 +83,7 @@ export default function Info(){
                 <PrettyInput coordinate='z' defaultValue={turtle.z?.toString() || '?'}/>
                 🧭
                 <PrettyInput coordinate='dir' defaultValue={['n', 'e', 's', 'w'][turtle?.dir] || '?' }/>
-                ⛽{turtle.fuel || '?'}
+                ⛽{turtle.fuel?.toString() || '?'}
             </p>
         }
     </div>

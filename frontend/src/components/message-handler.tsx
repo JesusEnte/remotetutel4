@@ -10,6 +10,7 @@ export default function MessageHandler(){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const [turtles, setTurtles] = useContext(TurtlesContext)
     const [blocks, setBlocks] = useContext(BlocksContext)
+    const turtle = turtleId ? turtles[turtleId] : null
 
     function websocket_message_handler(ev: MessageEvent){
         const message = JSON.parse(ev.data)
@@ -44,8 +45,7 @@ export default function MessageHandler(){
     }, [websocket])
 
     useEffect(() => {
-        if (turtleId == null) return
-        websocket.send(JSON.stringify({type: 'get inventory', id: turtleId}))
+        if (turtle?.status == 'online') websocket.send(JSON.stringify({type: 'get inventory', id: turtleId}))
     }, [turtleId])
 
     return null
