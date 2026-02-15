@@ -16,6 +16,7 @@ function TurtleMesh(props: Turtle){
     const setTooltipProps = useContext(SetTooltipContext)
     return <Gltf
         onClick={(event: ThreeEvent<MouseEvent>) => {
+            event.stopPropagation()
             setTooltipProps({x: event.x, y: event.y, time: 3000, text: `#${props.id}: ${props.status}`})
         }}
         src={TutelGLB} 
@@ -34,6 +35,7 @@ function BlockMesh(props: Block){
     return <mesh 
         position={[props.x, props.y, props.z]}
         onClick={(event: ThreeEvent<MouseEvent>) => {
+            event.stopPropagation()
             setTooltipProps({x: event.x, y: event.y, time: 3000, text: props.name!})
         }}
         >
