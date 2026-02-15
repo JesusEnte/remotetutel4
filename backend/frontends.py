@@ -43,9 +43,9 @@ class User:
                 self.update_blocks(block_changes)
             case 'suck':
                 turtle.suck(message['direction'])
-            case 'get inventories':
-                inventories = turtle.get_inventories(message['direction'])
-                self.ws.send(json.dumps({'type': 'inventories', 'inventories': inventories}))
+            case 'get inventory':
+                inventory = turtle.get_inventory()
+                self.ws.send(json.dumps({'type': 'inventory', 'inventory': inventory}))
             case _:
                 print(message)
 

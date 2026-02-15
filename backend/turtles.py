@@ -172,43 +172,23 @@ class Turtle:
             case 'down':
                 self.eval("turtle.suckDown()")
 
-    def get_inventories(self, direction: str) -> dict:
-        inspect = {'up': 'inspectUp', 'normal': 'inspect', 'down': 'inspectDown'}[direction]
-        direction = {'up': 'top', 'normal': 'front', 'down': 'bottom'}[direction]
-
+    def get_inventory(self) -> dict:
         return self.eval(f"""
-            inventories = {{}}
+            inventory = {{}}
                         
-            own = {{}}
             l = turtle.getEquippedLeft()
-            l = l and {{name = l.name, n = l.count}} or {{}}
-            own.left = l
+            l = l and {{name = l.name, count = l.count}} or {{}}
+            inventory.left_hand = l
             r = turtle.getEquippedRight()
-            r = r and {{name = r.name, n = r.count}} or {{}}
-            own.right = r
+            r = r and {{name = r.name, count = r.count}} or {{}}
+            inventory.right_hand = r
             for i=1,16 do
                 item = turtle.getItemDetail(i)
-                item = item and {{name = item.name, n = item.count}} or {{}}
-                own[tostring(i)] = item
+                item = item and {{name = item.name, count = item.count}} or {{}}
+                inventory[tostring(i)] = item
             end
-            inventories.turtle = own
-                        
-            p = {{}}
-            size = peripheral.call('{direction}', 'size') 
-            if size == nil then
-                inventories.peripheral = p
-                return inventories
-            end
-            
-            p.name = {{turtle.{inspect}()}}
-            p.name = p.name[2].name
-            for i=1, size do
-                item = peripheral.call('{direction}', 'getItemDetail', i)
-                item = item and {{name = item.name, n = item.count}} or {{}}
-                p[tostring(i)] = item
-            end
-            inventories.peripheral = p
-            return inventories
+                         
+            return inventory
 
         """)[0]
         

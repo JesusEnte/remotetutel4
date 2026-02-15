@@ -2,10 +2,12 @@ import { useEffect, useContext } from "react"
 import { WebsocketContext } from "../contexts/websocket"
 import { TurtlesContext } from "../contexts/turtles"
 import { BlocksContext, type Blocks } from "../contexts/blocks"
+import { TurtleIdContext } from "../contexts/turtleId"
 
 export default function MessageHandler(){
 
     const websocket = useContext(WebsocketContext)
+    const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const [turtles, setTurtles] = useContext(TurtlesContext)
     const [blocks, setBlocks] = useContext(BlocksContext)
 
@@ -26,8 +28,11 @@ export default function MessageHandler(){
                 }
                 setBlocks(clone)
                 break
-            case 'inventories':
-                console.log(message.inventories)
+            case 'inventory':
+                console.log(message.inventory)
+                break
+            default:
+                console.log(message)
         }
     }
 
@@ -37,6 +42,11 @@ export default function MessageHandler(){
         websocket.send(JSON.stringify({type: 'get turtles'}))
         websocket.send(JSON.stringify({type: 'get blocks'}))
     }, [websocket])
+
+    useEffect(() => {
+        if (turtleId == null) return
+        websocket.send(JSON.stringify({type: 'get inventory', id: turtleId}))
+    }, [turtleId])
 
     return null
 }
