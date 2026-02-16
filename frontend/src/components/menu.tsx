@@ -15,10 +15,9 @@ export default function Menu(){
         display: 'flex',
         justifyContent: 'right'
     }}>
-        <img src={menu_icon} style={{height: '100%'}}/>
-
         {turtle?.status != 'online' ? null :
             <img src={chest_icon} style={{height: '100%'}}/>
         }
+        <img src={menu_icon} style={{height: '100%'}}/>
     </div>
 }

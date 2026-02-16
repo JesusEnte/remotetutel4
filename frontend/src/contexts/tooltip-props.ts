@@ -1,4 +1,10 @@
-import { type TooltipProps } from "../components/tooltip"
 import { createContext } from "react"
 
-export const SetTooltipContext = createContext<(props: TooltipProps) => void>(null!)
+export interface TooltipProps {
+    x: number
+    y: number
+    time: number
+    text: string
+}
+
+export const TooltipContext = createContext<(props: TooltipProps) => void>(null!)

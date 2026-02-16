@@ -17,6 +17,10 @@ class User:
     def update_blocks(self, blocks: BlockCollection):
         self.ws.send(json.dumps({'type': 'blocks', 'blocks': blocks.to_jsonable_dict()}))
 
+    def update_inventory(self, turtle: Turtle):
+        inventory = turtle.get_inventory()
+        self.ws.send(json.dumps({'type': 'inventory', 'inventory': inventory}))
+
     def on_message(self, message, turtles: TurtleCollection, blocks: BlockCollection):
         if message.get('type') is None:
             return
@@ -28,7 +32,7 @@ class User:
                 self.update_turtles(turtles)
             case 'get blocks':
                 self.update_blocks(blocks)
-            case 'update info':
+            case 'set info':
                 turtle.update_info(message.get('info', {}))
                 self.ws.send(json.dumps({'type': 'turtles', 'turtles': {turtle.id: turtle.to_jsonable_dict()}}))
             case 'go':
@@ -44,8 +48,10 @@ class User:
             case 'suck':
                 turtle.suck(message['direction'])
             case 'get inventory':
-                inventory = turtle.get_inventory()
-                self.ws.send(json.dumps({'type': 'inventory', 'inventory': inventory}))
+                self.update_inventory(turtle)
+            case 'set selected':
+                turtle.set_selected(message['slot'])
+                self.update_inventory(turtle)
             case _:
                 print(message)
 

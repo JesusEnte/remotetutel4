@@ -1,23 +1,24 @@
 import './App.css'
+
 import { useState } from 'react'
+
 import Login from './components/login.tsx'
+
 import { WebsocketContext } from './contexts/websocket.ts'
-import { TurtlesContext } from './contexts/turtles.ts'
-import type { Turtles } from './contexts/turtles.ts'
-import MessageHandler from './components/message-handler.tsx'
-import { BlocksContext } from './contexts/blocks.ts'
-import type { Blocks } from './contexts/blocks.ts'
-import World from './components/world.tsx'
+import { TurtlesContext, type Turtles } from './contexts/turtles.ts'
+import { BlocksContext, type Blocks } from './contexts/blocks.ts'
 import { TurtleIdContext } from './contexts/turtleId.ts'
-import Info from './components/info.tsx'
 import { CameraDirectionContext } from './contexts/camera-direction.ts'
+import { TooltipContext, type TooltipProps } from './contexts/tooltip-props.ts'
+import { InventoryContext, type InventoryProps } from './contexts/intentory.ts'
+
+import MessageHandler from './components/message-handler.tsx'
+import World from './components/world.tsx'
+import Info from './components/info.tsx'
 import Actions from './components/actions.tsx'
 import Tooltip from './components/tooltip.tsx'
-import { type TooltipProps } from './components/tooltip.tsx'
-import { SetTooltipContext } from './contexts/tooltip-props.ts'
 import Menu from './components/menu.tsx'
 import Inventory from './components/inventory.tsx'
-import { InventoryContext, type InventoryProps } from './contexts/intentory.ts'
 
 export default function App() {
   
@@ -49,7 +50,7 @@ export default function App() {
     <BlocksContext value={[blocks, setBlocks]}>
     <TurtleIdContext value={[turtleId, setTurtleId]}>
     <CameraDirectionContext value={[getCameraDirection, setCameraDirectionGetter]}>
-    <SetTooltipContext value={setTooltipProps}>
+    <TooltipContext value={setTooltipProps}>
     <InventoryContext value={[inventoryProps, setInventoryProps]}>
 
       <MessageHandler/>
@@ -72,7 +73,7 @@ export default function App() {
       
 
     </InventoryContext>
-    </SetTooltipContext>
+    </TooltipContext>
     </CameraDirectionContext>
     </TurtleIdContext>
     </BlocksContext>

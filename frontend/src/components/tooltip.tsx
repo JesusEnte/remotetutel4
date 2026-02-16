@@ -1,11 +1,5 @@
 import { useEffect, useRef } from "react"
-
-export interface TooltipProps {
-    x: number
-    y: number
-    time: number
-    text: string
-}
+import { type TooltipProps } from "../contexts/tooltip-props"
 
 export default function Tooltip(props: TooltipProps){
     const ref = useRef<HTMLParagraphElement>(null!)

@@ -10,10 +10,10 @@ import { Gltf , OrbitControls } from "@react-three/drei"
 import usePrevious from "../hooks/use-previous"
 import { Vector3 } from "three"
 import { CameraDirectionContext } from "../contexts/camera-direction"
-import { SetTooltipContext } from "../contexts/tooltip-props"
+import { TooltipContext } from "../contexts/tooltip-props"
 
 function TurtleMesh(props: Turtle){
-    const setTooltipProps = useContext(SetTooltipContext)
+    const setTooltipProps = useContext(TooltipContext)
     return <Gltf
         onClick={(event: ThreeEvent<MouseEvent>) => {
             event.stopPropagation()
@@ -26,7 +26,7 @@ function TurtleMesh(props: Turtle){
 }
 
 function BlockMesh(props: Block){
-    const setTooltipProps = useContext(SetTooltipContext)
+    const setTooltipProps = useContext(TooltipContext)
 
     const r = props.color >> 16 & 255
     const g = props.color >> 8 & 255
@@ -85,7 +85,7 @@ export default function World(){
     const [turtles, _setTurtles] = useContext(TurtlesContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const turtle = turtleId ? turtles[turtleId] : null
-    const setTooltipProps = useContext(SetTooltipContext)
+    const setTooltipProps = useContext(TooltipContext)
     
     const target = (turtle == null || turtle.status == 'position unknown') ? new Vector3(0, 0, 0) : new Vector3(turtle.x, turtle.y, turtle.z)
 

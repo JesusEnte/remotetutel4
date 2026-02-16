@@ -31,12 +31,12 @@ function PrettyInput(props: TextInputProps){
                 case 'x':
                 case 'y':
                 case 'z':
-                    websocket.send(JSON.stringify({type: 'update info', id: turtleId, info: {[props.coordinate]: parseInt(target.value, 10)}}))
+                    websocket.send(JSON.stringify({type: 'set info', id: turtleId, info: {[props.coordinate]: parseInt(target.value, 10)}}))
                     break
                 case 'dir':
                     let dir: number | null = ['n', 'e', 's', 'w'].indexOf(target.value.toLowerCase())
                     if (dir == -1) dir = null
-                    websocket.send(JSON.stringify({type: 'update info', id: turtleId, info: {dir: dir}}))
+                    websocket.send(JSON.stringify({type: 'set info', id: turtleId, info: {dir: dir}}))
                     break
             }
         }}

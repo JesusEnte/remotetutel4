@@ -7,8 +7,7 @@ interface Item {
 }
 
 export type InventoryProps = Record<string, Item> & {
-    left_hand: Item,
-    right_hand: Item
+    selected: string
 }
 
 export const InventoryContext = createContext<[InventoryProps | null, (i: InventoryProps) => void]>(null!)

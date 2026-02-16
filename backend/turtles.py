@@ -175,22 +175,20 @@ class Turtle:
     def get_inventory(self) -> dict:
         return self.eval(f"""
             inventory = {{}}
-                        
-            l = turtle.getEquippedLeft()
-            l = l and {{name = l.name, count = l.count, color = l.mapColor}} or {{}}
-            inventory.left_hand = l
-            r = turtle.getEquippedRight()
-            r = r and {{name = r.name, count = r.count, color = r.mapColor}} or {{}}
-            inventory.right_hand = r
+                         
             for i=1,16 do
                 item = turtle.getItemDetail(i, true)
                 item = item and {{name = item.name, count = item.count, color = item.mapColor}} or {{}}
                 inventory[tostring(i)] = item
             end
                          
+            inventory.selected = tostring(turtle.getSelectedSlot())
+                         
             return inventory
-
         """)[0]
+    
+    def set_selected(self, slot):
+        self.eval(f'turtle.select({slot})')
         
 class TurtleCollection:
     def __init__(self):
