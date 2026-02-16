@@ -189,6 +189,9 @@ class Turtle:
     
     def set_selected(self, slot):
         self.eval(f'turtle.select({slot})')
+
+    def craft(self, count):
+        self.eval(f'turtle.craft({count})')
         
 class TurtleCollection:
     def __init__(self):

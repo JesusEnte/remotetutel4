@@ -25,7 +25,7 @@ class User:
         if message.get('type') is None:
             return
 
-        turtle = turtles.get(message.get('id'))
+        turtle: Turtle = turtles.get(message.get('id'))
             
         match (message['type']):
             case 'get turtles':
@@ -51,6 +51,9 @@ class User:
                 self.update_inventory(turtle)
             case 'set selected':
                 turtle.set_selected(message['slot'])
+                self.update_inventory(turtle)
+            case 'craft':
+                turtle.craft(message['count'])
                 self.update_inventory(turtle)
             case _:
                 print(message)

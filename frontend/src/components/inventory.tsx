@@ -70,6 +70,22 @@ function ActionCount(props: ActionCountProps){
     </SlotContainer>
 }
 
+interface CraftProps {
+    count: number
+}
+function Craft(props: CraftProps){
+    const websocket = useContext(WebsocketContext)
+    const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
+
+    return <SlotContainer
+        onClick={() => {
+            websocket.send(JSON.stringify({type: 'craft', id: turtleId, count: props.count}))
+        }}
+    >
+        <p style={{userSelect: 'none'}}>Craft</p>
+    </SlotContainer>
+}
+
 
 export default function Inventory(){
     const [inventory, _setInventory] = useContext(InventoryContext)
@@ -95,7 +111,7 @@ export default function Inventory(){
             const slot = inventory[i + 1]
             return <Item slot={(i + 1).toString()} {...slot} selected={inventory.selected}/>
         })}
-        <div/>
+        <Craft count={count}/>
         {[...Array(4)].map((_v, i) => {
             const slot = inventory[i + 5]
             return <Item slot={(i + 5).toString()} {...slot} selected={inventory.selected}/>
