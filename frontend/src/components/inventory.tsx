@@ -79,7 +79,8 @@ export default function Inventory(){
     const turtle = turtleId ? turtles[turtleId] : null
 
     if (inventory == null || turtle == null || turtle.status == 'offline') return null
-    return <div
+    return <>
+    <div
         style={{
             display: 'grid',
             gridTemplateRows: 'repeat(4, 1fr)',
@@ -110,5 +111,7 @@ export default function Inventory(){
             return <Item slot={(i + 13).toString()} {...slot} selected={inventory.selected}/>
         })}
     </div>
+    <p style={{textAlign: 'right', marginRight: '1%'}}>{inventory.selected}: {inventory[inventory.selected].name || 'empty'}</p>
+    </>
     
 }
