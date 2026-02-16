@@ -16,6 +16,8 @@ import Tooltip from './components/tooltip.tsx'
 import { type TooltipProps } from './components/tooltip.tsx'
 import { SetTooltipContext } from './contexts/tooltip-props.ts'
 import Menu from './components/menu.tsx'
+import Inventory from './components/inventory.tsx'
+import { InventoryContext, type InventoryProps } from './contexts/intentory.ts'
 
 export default function App() {
   
@@ -25,6 +27,8 @@ export default function App() {
   const [turtles, setTurtles] = useState<Turtles>({})
   const [turtleId, setTurtleId] = useState<string | null>(null)
   const [blocks, setBlocks] = useState<Blocks>({})
+
+  const [inventoryProps, setInventoryProps] = useState<InventoryProps | null>(null)
 
   const [getCameraDirection, setCameraDirectionGetter] = useState<(n: 2 | 3) => string>(null!)
   const [tooltipProps, setTooltipProps] = useState<TooltipProps | null>(null)
@@ -46,16 +50,28 @@ export default function App() {
     <TurtleIdContext value={[turtleId, setTurtleId]}>
     <CameraDirectionContext value={[getCameraDirection, setCameraDirectionGetter]}>
     <SetTooltipContext value={setTooltipProps}>
+    <InventoryContext value={[inventoryProps, setInventoryProps]}>
 
       <MessageHandler/>
       
       <World/>
+      {tooltipProps ? <Tooltip {...tooltipProps}/> : null} 
+
       <Info/>
       <Actions/>
-      <Menu/>
-      {tooltipProps ? <Tooltip {...tooltipProps}/> : null} 
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0
+        }}
+        >
+        <Inventory/>
+        <Menu/>
+      </div>
       
 
+    </InventoryContext>
     </SetTooltipContext>
     </CameraDirectionContext>
     </TurtleIdContext>

@@ -11,15 +11,14 @@ export default function Menu(){
     const turtle = turtleId ? turtles[turtleId] : null
 
     return <div style={{
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        aspectRatio: 1/2,
-        height: '10svh'
+        height: '5svh',
+        display: 'flex',
+        justifyContent: 'right'
     }}>
-        <img src={menu_icon} style={{width: '100%'}}/>
-        {turtle?.status == 'online' ?
-            <img src={chest_icon} style={{width: '100%'}}/>
-        : null}
+        <img src={menu_icon} style={{height: '100%'}}/>
+
+        {turtle?.status != 'online' ? null :
+            <img src={chest_icon} style={{height: '100%'}}/>
+        }
     </div>
 }

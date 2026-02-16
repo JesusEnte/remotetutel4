@@ -177,14 +177,14 @@ class Turtle:
             inventory = {{}}
                         
             l = turtle.getEquippedLeft()
-            l = l and {{name = l.name, count = l.count}} or {{}}
+            l = l and {{name = l.name, count = l.count, color = l.mapColor}} or {{}}
             inventory.left_hand = l
             r = turtle.getEquippedRight()
-            r = r and {{name = r.name, count = r.count}} or {{}}
+            r = r and {{name = r.name, count = r.count, color = r.mapColor}} or {{}}
             inventory.right_hand = r
             for i=1,16 do
-                item = turtle.getItemDetail(i)
-                item = item and {{name = item.name, count = item.count}} or {{}}
+                item = turtle.getItemDetail(i, true)
+                item = item and {{name = item.name, count = item.count, color = item.mapColor}} or {{}}
                 inventory[tostring(i)] = item
             end
                          

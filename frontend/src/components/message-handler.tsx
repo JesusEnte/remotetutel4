@@ -3,6 +3,7 @@ import { WebsocketContext } from "../contexts/websocket"
 import { TurtlesContext } from "../contexts/turtles"
 import { BlocksContext, type Blocks } from "../contexts/blocks"
 import { TurtleIdContext } from "../contexts/turtleId"
+import { InventoryContext } from "../contexts/intentory"
 
 export default function MessageHandler(){
 
@@ -10,6 +11,7 @@ export default function MessageHandler(){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const [turtles, setTurtles] = useContext(TurtlesContext)
     const [blocks, setBlocks] = useContext(BlocksContext)
+    const [_inventory, setInventory] = useContext(InventoryContext)
     const turtle = turtleId ? turtles[turtleId] : null
 
     function websocket_message_handler(ev: MessageEvent){
@@ -30,7 +32,7 @@ export default function MessageHandler(){
                 setBlocks(clone)
                 break
             case 'inventory':
-                console.log(message.inventory)
+                setInventory(message.inventory)
                 break
             default:
                 console.log(message)

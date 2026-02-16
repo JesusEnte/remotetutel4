@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import { TurtlesContext } from "../contexts/turtles"
 import { TurtleIdContext } from "../contexts/turtleId"
 import { WebsocketContext } from "../contexts/websocket"
@@ -48,12 +48,6 @@ export default function Info(){
     const [turtles, _setTurtles] = useContext(TurtlesContext)
     const turtle = turtleId ? turtles[turtleId] : null
     const websocket = useContext(WebsocketContext)
-    
-    useEffect(() => {
-        if (turtleId == null && Array.from(Object.keys(turtles)).length > 0){
-            setTurtleId(Array.from(Object.keys(turtles))[0])
-        } 
-    }, [turtles])
 
     return <div
         style={{
@@ -71,9 +65,9 @@ export default function Info(){
                 websocket.send(JSON.stringify({type: 'get turtles'}))
             }}
         >
-            {Array.from(Object.entries(turtles)).map(([id, turtle]) => {
+            {[<option key='hint' disabled={turtleId != null}>Select a Turtle</option>].concat(Array.from(Object.entries(turtles)).map(([id, turtle]) => {
                 return <option key={`${id} ${turtle.status}`}value={id}>#{id}: {turtle.status}</option>
-            })}
+            }))}
         </select>
         {turtle == null ? null : 
             <p key={`${turtle.x} ${turtle.y} ${turtle.z} ${turtle.dir} ${turtle.fuel}`}>
