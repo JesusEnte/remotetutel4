@@ -1,5 +1,5 @@
 import { InventoryContext } from "../contexts/intentory"
-import { useContext, useState } from "react"
+import { useContext } from "react"
 import { TurtlesContext } from "../contexts/turtles"
 import { TurtleIdContext } from "../contexts/turtleId"
 import { WebsocketContext } from "../contexts/websocket"
@@ -100,14 +100,32 @@ function Craft(){
     </SlotContainer>
 }
 
+function Refuel(){
+    const [count, _setCount] = useContext(InventoryActionCountContext)
+    const websocket = useContext(WebsocketContext)
+    const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
 
+    return <SlotContainer
+        onDragOver={(event: React.DragEvent) => {
+            event.preventDefault()
+        }}
+        onDrop={(event: React.DragEvent) => {
+            const start = event.dataTransfer.getData('text')
+            if (start.includes('Slot')){
+                const slot = start.slice(start.indexOf('Slot') + 5)
+                websocket.send(JSON.stringify({type: 'refuel', slot: slot, count: count, id: turtleId}))
+            }
+        }}
+    >
+        <p style={{userSelect: 'none'}}>Refuel</p>
+    </SlotContainer>
+}
 
 
 export default function Inventory(){
     const [inventory, _setInventory] = useContext(InventoryContext)
     const [turtles, _setTurtles] = useContext(TurtlesContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
-    const [count, setCount] = useContext(InventoryActionCountContext)
     const turtle = turtleId ? turtles[turtleId] : null
 
     if (inventory == null || turtle == null || turtle.status == 'offline') return null
@@ -132,7 +150,7 @@ export default function Inventory(){
             const slot = inventory[i + 5]
             return <Item slot={(i + 5).toString()} {...slot} selected={inventory.selected}/>
         })}
-        <div/>
+        <Refuel/>
         {[...Array(4)].map((_v, i) => {
             const slot = inventory[i + 9]
             return <Item slot={(i + 9).toString()} {...slot} selected={inventory.selected}/>

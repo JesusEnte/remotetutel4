@@ -118,7 +118,6 @@ class Turtle:
         match (direction):
             case 'forward' | 'back' | 'up' | 'down':
                 success = self.eval(f'return turtle.{direction}()')[0]
-                self.update_fuel()
             case 'left':
                 success = self.eval(f'return turtle.turnLeft()')[0]
             case 'right':
@@ -196,6 +195,10 @@ class Turtle:
     def transferTo(self, f, t, count):
         self.set_selected(f)
         self.eval(f'turtle.transferTo({t}, {count})')
+
+    def refuel(self, slot, count):
+        self.set_selected(slot)
+        self.eval(f'turtle.refuel({count})')
         
 class TurtleCollection:
     def __init__(self):
