@@ -31,11 +31,11 @@ export default function App() {
   const [blocks, setBlocks] = useState<Blocks>({})
 
   const [inventoryProps, setInventoryProps] = useState<InventoryProps | null>(null)
+  const [inventoryActionCount, setInventoryActionCount] = useState<number>(1)
 
   const [getCameraDirection, setCameraDirectionGetter] = useState<(n: 2 | 3) => string>(null!)
   const [tooltipProps, setTooltipProps] = useState<TooltipProps | null>(null)
 
-  const [inventoryActionCount, setInventoryActionCount] = useState<number>(1)
 
 
   if (websocket == null){  

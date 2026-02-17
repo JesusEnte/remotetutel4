@@ -4,6 +4,7 @@ import { TurtlesContext } from "../contexts/turtles"
 import { TurtleIdContext } from "../contexts/turtleId"
 import { WebsocketContext } from "../contexts/websocket"
 import { InventoryActionCountContext } from "../contexts/inventory-action-count"
+import { CameraDirectionContext } from "../contexts/camera-direction"
 
 
 function SlotContainer(props: any){
@@ -74,9 +75,7 @@ function Item(props: ItemProps){
 function ActionCount(){
     const [count, setCount] = useContext(InventoryActionCountContext)
     return <SlotContainer
-        style={{
-            backgroundColor: `hsl(${(count * 100) % 360}, 100%, 40%)`
-        }}
+        style={{backgroundColor: 'black'}}
         onClick={() => {
             setCount((count * 2) % 127)
         }}
@@ -92,6 +91,7 @@ function Craft(){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
 
     return <SlotContainer
+        style={{backgroundColor: 'black'}}
         onClick={() => {
             websocket.send(JSON.stringify({type: 'craft', id: turtleId, count: count}))
         }}
@@ -106,6 +106,7 @@ function Refuel(){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
 
     return <SlotContainer
+        style={{backgroundColor: 'black'}}
         onDragOver={(event: React.DragEvent) => {
             event.preventDefault()
         }}
@@ -121,6 +122,28 @@ function Refuel(){
     </SlotContainer>
 }
 
+function Drop(){
+    const [count, _setCount] = useContext(InventoryActionCountContext)
+    const websocket = useContext(WebsocketContext)
+    const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
+    const [getCameraDirection, _setCameraDirectionGetter] = useContext(CameraDirectionContext)
+
+    return <SlotContainer
+        style={{backgroundColor: 'black'}}
+        onDragOver={(event: React.DragEvent) => {
+            event.preventDefault()
+        }}
+        onDrop={(event: React.DragEvent) => {
+            const start = event.dataTransfer.getData('text')
+            if (start.includes('Slot')){
+                const slot = start.slice(start.indexOf('Slot') + 5)
+                websocket.send(JSON.stringify({type: 'drop', slot: slot, count: count, id: turtleId, direction: getCameraDirection(3)}))
+            }
+        }}
+    >
+        <p style={{userSelect: 'none'}}>Drop</p>
+    </SlotContainer>
+}
 
 export default function Inventory(){
     const [inventory, _setInventory] = useContext(InventoryContext)
@@ -155,7 +178,7 @@ export default function Inventory(){
             const slot = inventory[i + 9]
             return <Item slot={(i + 9).toString()} {...slot} selected={inventory.selected}/>
         })}
-        <div/>
+        <Drop/>
         {[...Array(4)].map((_v, i) => {
             const slot = inventory[i + 13]
             return <Item slot={(i + 13).toString()} {...slot} selected={inventory.selected}/>

@@ -43,11 +43,11 @@ class User:
             case 'right click':
                 block_changes = turtle.right_click(message['direction'], blocks)
                 self.update_blocks(block_changes)
-                self.update_turtle(turtle)
+                self.update_inventory(turtle)
             case 'left click':
                 block_changes = turtle.left_click(message['direction'], blocks)
                 self.update_blocks(block_changes)
-                self.update_turtle(turtle)
+                self.update_inventory(turtle)
             case 'suck':
                 turtle.suck(message['direction'])
                 self.update_inventory(turtle)
@@ -67,6 +67,9 @@ class User:
                 self.update_inventory(turtle)
                 turtle.update_fuel()
                 self.update_turtle(turtle)
+            case 'drop':
+                turtle.drop(message['slot'], message['count'], message['direction'])
+                self.update_inventory(turtle)
             case _:
                 print(message)
 

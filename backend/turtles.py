@@ -199,6 +199,16 @@ class Turtle:
     def refuel(self, slot, count):
         self.set_selected(slot)
         self.eval(f'turtle.refuel({count})')
+
+    def drop(self, slot, count, direction):
+        self.set_selected(slot)
+        match (direction):
+            case 'normal':
+                self.eval(f'turtle.drop({count})')
+            case 'up':
+                self.eval(f'turtle.dropUp({count})')
+            case 'down':
+                self.eval(f'turtle.dropDown({count})')
         
 class TurtleCollection:
     def __init__(self):
