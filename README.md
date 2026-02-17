@@ -8,7 +8,7 @@ React frontend built with vite / nodejs, Python Flask backend
 ## Setup
 Requirements: Python and Node
 
-When both of those are installed you should be just using the `setup.sh` or `setup.bat` file
+When both of those are installed you should be just fine using the `setup.sh` or `setup.bat` file
 
 That will install the frontend dependencies, build the frontend, create a virtual environment for python and install all of it's dependencies as well 
 
