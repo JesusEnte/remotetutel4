@@ -3,6 +3,7 @@ import { useContext, useState } from "react"
 import { TurtlesContext } from "../contexts/turtles"
 import { TurtleIdContext } from "../contexts/turtleId"
 import { WebsocketContext } from "../contexts/websocket"
+import { InventoryActionCountContext } from "../contexts/inventory-action-count"
 
 
 function SlotContainer(props: any){
@@ -32,6 +33,7 @@ interface ItemProps {
 function Item(props: ItemProps){
     const websocket = useContext(WebsocketContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
+    const [count, _setCount]= useContext(InventoryActionCountContext)
 
     let bg = 'unset'
     if (props.color != undefined) bg = `rgba(${(props.color >> 16 & 255)}, ${props.color >> 8 & 255}, ${props.color & 255}, 0.8)`
@@ -42,44 +44,56 @@ function Item(props: ItemProps){
         onClick={() => {
             websocket.send(JSON.stringify({type: 'set selected', slot: props.slot, id: turtleId}))
         }}
-        draggable='true'
         style={{
             backgroundColor: bg,
             border: border
         }}
         title={`${props.slot}: ${props.name || 'empty'}`}
+        draggable
+
+        onDragStart={(event: React.DragEvent) => {
+            event.dataTransfer.setData('text', `Slot ${props.slot}`)
+        }}
+        onDragOver={(event: React.DragEvent) => {
+            event.preventDefault()
+        }}
+        onDrop={(event: React.DragEvent) => {
+            const start = event.dataTransfer.getData('text')
+            if (start.includes('Slot')){
+                const from = start.slice(start.indexOf('Slot') + 5)
+                const to = props.slot
+                websocket.send(JSON.stringify({type: 'transferTo', from: from, to: to, count: count, id: turtleId}))
+            }
+        }}
     >
         <p style={{userSelect: 'none'}}>{props.count || 0}</p>
     </SlotContainer>
 }
 
-interface ActionCountProps {
-    count: number,
-    setCount: (n: number) => void
-}
-function ActionCount(props: ActionCountProps){
+
+function ActionCount(){
+    const [count, setCount] = useContext(InventoryActionCountContext)
     return <SlotContainer
         style={{
-            backgroundColor: `hsl(${(props.count * 100) % 360}, 100%, 40%)`
+            backgroundColor: `hsl(${(count * 100) % 360}, 100%, 40%)`
         }}
         onClick={() => {
-            props.setCount((props.count * 2) % 127)
+            setCount((count * 2) % 127)
         }}
     >
-        <p style={{userSelect: 'none'}}>Count<br/>{props.count}</p>
+        <p style={{userSelect: 'none'}}>Count<br/>{count}</p>
     </SlotContainer>
 }
 
-interface CraftProps {
-    count: number
-}
-function Craft(props: CraftProps){
+
+function Craft(){
+    const [count, _setCount] = useContext(InventoryActionCountContext)
     const websocket = useContext(WebsocketContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
 
     return <SlotContainer
         onClick={() => {
-            websocket.send(JSON.stringify({type: 'craft', id: turtleId, count: props.count}))
+            websocket.send(JSON.stringify({type: 'craft', id: turtleId, count: count}))
         }}
     >
         <p style={{userSelect: 'none'}}>Craft</p>
@@ -87,11 +101,13 @@ function Craft(props: CraftProps){
 }
 
 
+
+
 export default function Inventory(){
     const [inventory, _setInventory] = useContext(InventoryContext)
     const [turtles, _setTurtles] = useContext(TurtlesContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
-    const [count, setCount] = useState<number>(1)
+    const [count, setCount] = useContext(InventoryActionCountContext)
     const turtle = turtleId ? turtles[turtleId] : null
 
     if (inventory == null || turtle == null || turtle.status == 'offline') return null
@@ -106,12 +122,12 @@ export default function Inventory(){
             height: '25svh'
         }}
     >
-        <ActionCount count={count} setCount={setCount}/>
+        <ActionCount/>
         {[...Array(4)].map((_v, i) => {
             const slot = inventory[i + 1]
             return <Item slot={(i + 1).toString()} {...slot} selected={inventory.selected}/>
         })}
-        <Craft count={count}/>
+        <Craft/>
         {[...Array(4)].map((_v, i) => {
             const slot = inventory[i + 5]
             return <Item slot={(i + 5).toString()} {...slot} selected={inventory.selected}/>

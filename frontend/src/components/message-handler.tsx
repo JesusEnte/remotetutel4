@@ -21,15 +21,7 @@ export default function MessageHandler(){
                 setTurtles(Object.assign(structuredClone(turtles), message.turtles))
                 break
             case 'blocks':
-                const clone = structuredClone(blocks)
-                for (const [key, block] of Object.entries(message.blocks as Blocks)) {
-                    if (block.name == null){
-                        delete clone[key]
-                    } else {
-                        clone[key] = block
-                    }
-                }
-                setBlocks(clone)
+                setBlocks(Object.fromEntries(Object.entries(Object.assign(structuredClone(blocks), message.blocks as Blocks)).filter(([_k, v]) => v.name != null)))
                 break
             case 'inventory':
                 setInventory(message.inventory)

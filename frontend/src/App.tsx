@@ -19,6 +19,7 @@ import Actions from './components/actions.tsx'
 import Tooltip from './components/tooltip.tsx'
 import Menu from './components/menu.tsx'
 import Inventory from './components/inventory.tsx'
+import { InventoryActionCountContext } from './contexts/inventory-action-count.ts'
 
 export default function App() {
   
@@ -33,6 +34,8 @@ export default function App() {
 
   const [getCameraDirection, setCameraDirectionGetter] = useState<(n: 2 | 3) => string>(null!)
   const [tooltipProps, setTooltipProps] = useState<TooltipProps | null>(null)
+
+  const [inventoryActionCount, setInventoryActionCount] = useState<number>(1)
 
 
   if (websocket == null){  
@@ -52,6 +55,8 @@ export default function App() {
     <CameraDirectionContext value={[getCameraDirection, setCameraDirectionGetter]}>
     <TooltipContext value={setTooltipProps}>
     <InventoryContext value={[inventoryProps, setInventoryProps]}>
+    <InventoryActionCountContext value={[inventoryActionCount, setInventoryActionCount]}>
+
 
       <MessageHandler/>
       
@@ -72,6 +77,7 @@ export default function App() {
       </div>
       
 
+    </InventoryActionCountContext>
     </InventoryContext>
     </TooltipContext>
     </CameraDirectionContext>

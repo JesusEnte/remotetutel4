@@ -55,6 +55,9 @@ class User:
             case 'craft':
                 turtle.craft(message['count'])
                 self.update_inventory(turtle)
+            case 'transferTo':
+                turtle.transferTo(message['from'], message['to'], message['count'])
+                self.update_inventory(turtle)
             case _:
                 print(message)
 

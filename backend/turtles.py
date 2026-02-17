@@ -192,6 +192,10 @@ class Turtle:
 
     def craft(self, count):
         self.eval(f'turtle.craft({count})')
+
+    def transferTo(self, f, t, count):
+        self.set_selected(f)
+        self.eval(f'turtle.transferTo({t}, {count})')
         
 class TurtleCollection:
     def __init__(self):
