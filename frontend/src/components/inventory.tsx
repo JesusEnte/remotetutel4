@@ -16,8 +16,7 @@ function SlotContainer(props: any){
         width: '90%',
         aspectRatio: 1,
         textAlign: 'center',
-        placeContent: 'center',
-        placeSelf: 'center',
+        placeContent: 'center center',
         border: '2px solid black',
         borderRadius: '5px',
         ...props.style,
@@ -157,7 +156,7 @@ export default function Inventory({style}: {style?: CSSProperties}){
             style={{
                 display: 'grid',
                 gridTemplate: 'repeat(4, 1fr) / repeat(5, 1fr)',
-                placeItems: 'center / center',
+                placeItems: 'center center',
                 aspectRatio: 5 / 4,
                 height: '100%',
                 maxWidth: '100%',
@@ -166,22 +165,22 @@ export default function Inventory({style}: {style?: CSSProperties}){
             <ActionCount/>
             {[...Array(4)].map((_v, i) => {
                 const slot = inventory[i + 1]
-                return <Item slot={(i + 1).toString()} {...slot} selected={inventory.selected}/>
+                return <Item slot={(i + 1).toString()} {...slot} selected={inventory.selected} key={i + 1}/>
             })}
             <Craft/>
             {[...Array(4)].map((_v, i) => {
                 const slot = inventory[i + 5]
-                return <Item slot={(i + 5).toString()} {...slot} selected={inventory.selected}/>
+                return <Item slot={(i + 5).toString()} {...slot} selected={inventory.selected} key={i + 1}/>
             })}
             <Fuel/>
             {[...Array(4)].map((_v, i) => {
                 const slot = inventory[i + 9]
-                return <Item slot={(i + 9).toString()} {...slot} selected={inventory.selected}/>
+                return <Item slot={(i + 9).toString()} {...slot} selected={inventory.selected} key={i + 1}/>
             })}
             <Drop/>
             {[...Array(4)].map((_v, i) => {
                 const slot = inventory[i + 13]
-                return <Item slot={(i + 13).toString()} {...slot} selected={inventory.selected}/>
+                return <Item slot={(i + 13).toString()} {...slot} selected={inventory.selected} key={i + 1}/>
             })}
         </div>
         <p style={{justifySelf: 'flex-end', lineBreak: 'anywhere'}}>{inventory.selected}: {inventory[inventory.selected].name || 'empty'}</p>

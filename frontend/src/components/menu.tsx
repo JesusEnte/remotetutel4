@@ -3,12 +3,16 @@ import chest_icon from '../assets/chest_icon.png'
 import { useContext, type CSSProperties } from 'react'
 import { TurtlesContext } from '../contexts/turtles'
 import { TurtleIdContext } from '../contexts/turtleId'
+import { WebsocketContext } from '../contexts/websocket'
+import { CameraDirectionContext } from '../contexts/camera-direction'
 
 
 export default function Menu({style}: {style?: CSSProperties}){
     const [turtles, _setTurtles] = useContext(TurtlesContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const turtle = turtleId ? turtles[turtleId] : null
+    const websocket = useContext(WebsocketContext)
+    const [getTurtleDirection, _getTurtleDirectionSetter] = useContext(CameraDirectionContext)
 
     return <div style={{
         position: 'absolute',
@@ -16,7 +20,7 @@ export default function Menu({style}: {style?: CSSProperties}){
         ...style
     }}>
         {turtle?.status != 'online' ? null :
-            <img src={chest_icon} style={{height: '100%'}}/>
+            <img src={chest_icon} style={{height: '100%'}} onClick={() => {websocket.send(JSON.stringify({type: 'get chest', id: turtleId, direction: getTurtleDirection(3)}))}}/>
         }
         <img src={menu_icon} style={{height: '100%'}}/>
     </div>

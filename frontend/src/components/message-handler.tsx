@@ -4,6 +4,7 @@ import { TurtlesContext } from "../contexts/turtles"
 import { BlocksContext, type Blocks } from "../contexts/blocks"
 import { TurtleIdContext } from "../contexts/turtleId"
 import { InventoryContext } from "../contexts/intentory"
+import { ChestContext } from "../contexts/chest"
 
 export default function MessageHandler(){
 
@@ -13,6 +14,7 @@ export default function MessageHandler(){
     const [blocks, setBlocks] = useContext(BlocksContext)
     const [_inventory, setInventory] = useContext(InventoryContext)
     const turtle = turtleId ? turtles[turtleId] : null
+    const [_chest, setChest] = useContext(ChestContext)
 
     function websocket_message_handler(ev: MessageEvent){
         const message = JSON.parse(ev.data)
@@ -25,6 +27,9 @@ export default function MessageHandler(){
                 break
             case 'inventory':
                 setInventory(message.inventory)
+                break
+            case 'chest':
+                setChest(message.chest)
                 break
             default:
                 console.log(message)

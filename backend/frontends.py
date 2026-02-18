@@ -70,6 +70,9 @@ class User:
             case 'drop':
                 turtle.drop(message['slot'], message['count'], message['direction'])
                 self.update_inventory(turtle)
+            case 'get chest':
+                chest = turtle.get_chest(message['direction'])
+                self.ws.send(json.dumps({'type': 'chest', 'chest': chest}))
             case _:
                 print(message)
 

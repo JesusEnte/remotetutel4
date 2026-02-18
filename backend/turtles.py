@@ -209,6 +209,38 @@ class Turtle:
                 self.eval(f'turtle.dropUp({count})')
             case 'down':
                 self.eval(f'turtle.dropDown({count})')
+
+    def get_chest(self, direction) -> dict:
+        match direction:
+            case 'up':
+                direction = 'top'
+            case 'normal':
+                direction = 'front'
+            case 'down':
+                direction = 'bottom'
+        chest = self.eval(f"""
+            types = {{peripheral.getType('{direction}')}}
+            isInventory = false
+            for _, v in ipairs(types) do 
+                if v == 'inventory' then isInventory = true end 
+            end
+
+            if not isInventory then return false end
+
+            chest = {{inventory = peripheral.call('{direction}', 'list')}}
+            chest.size = peripheral.call('{direction}', 'size')
+            chest.name = types[1]
+
+            return chest
+        """)[0]
+
+        if not chest: return None
+
+        #json translation error (emtpy array = empty dict cuz lua tables)
+        if type(chest.get('inventory')) != list:
+            chest['inventory'] = []
+
+        return chest
         
 class TurtleCollection:
     def __init__(self):
