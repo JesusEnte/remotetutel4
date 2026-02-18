@@ -15,8 +15,9 @@ function SlotContainer(props: any){
         aspectRatio: 1,
         textAlign: 'center',
         alignContent: 'center',
-        border: '1px solid white',
+        border: '2px solid black',
         borderRadius: '5px',
+
         ...props.style,
     }}
     >
@@ -39,8 +40,8 @@ function Item(props: ItemProps){
     let bg = 'unset'
     if (props.color != undefined) bg = `rgba(${(props.color >> 16 & 255)}, ${props.color >> 8 & 255}, ${props.color & 255}, 0.8)`
 
-    let border = '1px solid white'
-    if (props.slot == props.selected) border = '3px solid white'
+    let border = '2px solid black'
+    if (props.slot == props.selected) border = '2px solid white'
     return <SlotContainer
         onClick={() => {
             websocket.send(JSON.stringify({type: 'set selected', slot: props.slot, id: turtleId}))
@@ -75,7 +76,7 @@ function Item(props: ItemProps){
 function ActionCount(){
     const [count, setCount] = useContext(InventoryActionCountContext)
     return <SlotContainer
-        style={{backgroundColor: 'black'}}
+        style={{backgroundColor: 'DimGrey'}}
         onClick={() => {
             setCount((count * 2) % 127)
         }}
@@ -91,7 +92,7 @@ function Craft(){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
 
     return <SlotContainer
-        style={{backgroundColor: 'black'}}
+        style={{backgroundColor: 'DimGrey'}}
         onClick={() => {
             websocket.send(JSON.stringify({type: 'craft', id: turtleId, count: count}))
         }}
@@ -106,7 +107,7 @@ function Refuel(){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
 
     return <SlotContainer
-        style={{backgroundColor: 'black'}}
+        style={{backgroundColor: 'DimGrey'}}
         onDragOver={(event: React.DragEvent) => {
             event.preventDefault()
         }}
@@ -129,7 +130,7 @@ function Drop(){
     const [getCameraDirection, _setCameraDirectionGetter] = useContext(CameraDirectionContext)
 
     return <SlotContainer
-        style={{backgroundColor: 'black'}}
+        style={{backgroundColor: 'DimGrey'}}
         onDragOver={(event: React.DragEvent) => {
             event.preventDefault()
         }}
@@ -156,11 +157,14 @@ export default function Inventory(){
     <div
         style={{
             display: 'grid',
-            gridTemplateRows: 'repeat(4, 1fr)',
-            gridTemplateColumns: 'repeat(5, 1fr)',
+            gridTemplate: 'repeat(4, 1fr) / repeat(5, 1fr)',
+            alignItems: 'center',
+            justifyItems: 'center',
             aspectRatio: 5 / 4,
-            gap: '2px',
-            height: '25svh'
+            height: '25svh',
+            border: '3px solid white',
+            borderRadius: '5px',
+            padding: '2px'
         }}
     >
         <ActionCount/>
