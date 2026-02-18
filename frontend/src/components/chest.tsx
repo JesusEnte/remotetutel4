@@ -28,7 +28,7 @@ export default function Chest({style}: {style?: CSSProperties}){
                 borderBottom: '2px solid white'
             }}
         >
-            <h3 style={{placeSelf: 'center center'}}>{chest.name}</h3>
+            <p style={{placeSelf: 'center center'}}>{chest.name}</p>
             <button 
                 onClick = {() => {
                     setChest(null)
@@ -57,22 +57,21 @@ export default function Chest({style}: {style?: CSSProperties}){
             }}
         >
             {[...Array(chest.size)].map((_v, i) => {
-                const name = chest.inventory.at(i + 1) == undefined ? 'empty' : chest.inventory.at(i + 1)!.name
-                const count = chest.inventory.at(i + 1) == undefined ? 0 : chest.inventory.at(i + 1)!.count
+                const name = chest.inventory.at(i) == undefined ? 'empty' : chest.inventory.at(i)!.name
+                const count = chest.inventory.at(i) == undefined ? 0 : chest.inventory.at(i)!.count
                 return <p
                     key={i + 1}
                     style={{
                         aspectRatio: 1,
-                        height: '5ch',
+                        height: '4ch',
                         textAlign: 'center',
                         placeContent: 'center center',
                         border: '2px solid white',
                         userSelect: 'none'
                     }}
-                    title={name}
+                    title={`${i + 1}: ${name}`}
                     onClick={(event: React.MouseEvent<HTMLParagraphElement>) => {
-                        console.log(event)
-                        setTooltip({x: event.clientX, y: event.clientY, time: 1500, text: name})
+                        setTooltip({x: event.clientX, y: event.clientY, time: 1500, text: `${i + 1}: ${name}`})
                     }}
                 >
                     {count}
