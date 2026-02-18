@@ -4,6 +4,9 @@ import { TurtleIdContext } from "../contexts/turtleId"
 import { WebsocketContext } from "../contexts/websocket"
 import { InventoryActionCountContext } from "../contexts/inventory-action-count"
 import { CameraDirectionContext } from "../contexts/camera-direction"
+import craft_icon from '../assets/craft_icon.png'
+import fuel_icon from '../assets/fuel_icon.png'
+import drop_icon from '../assets/drop_icon.png'
 
 
 function SlotContainer(props: any){
@@ -70,12 +73,12 @@ function Item(props: ItemProps){
 function ActionCount(){
     const [count, setCount] = useContext(InventoryActionCountContext)
     return <SlotContainer
-        style={{backgroundColor: 'DimGrey'}}
+        style={{backgroundColor: 'rgba(255, 255, 255, 0.8)'}}
         onClick={() => {
             setCount((count * 2) % 127)
         }}
     >
-        <p style={{userSelect: 'none'}}>{count}</p>
+        <p style={{userSelect: 'none', color: 'black'}}>{count}</p>
     </SlotContainer>
 }
 
@@ -86,12 +89,11 @@ function Craft(){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
 
     return <SlotContainer
-        style={{backgroundColor: 'DimGrey'}}
         onClick={() => {
             websocket.send(JSON.stringify({type: 'craft', id: turtleId, count: count}))
         }}
     >
-        <p style={{userSelect: 'none'}} title='Craft'>C</p>
+        <img src={craft_icon} style={{width: '70%', height: '70%'}}/>
     </SlotContainer>
 }
 
@@ -101,7 +103,6 @@ function Fuel(){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
 
     return <SlotContainer
-        style={{backgroundColor: 'DimGrey'}}
         onDragOver={(event: React.DragEvent) => {
             event.preventDefault()
         }}
@@ -113,7 +114,7 @@ function Fuel(){
             }
         }}
     >
-        <p style={{userSelect: 'none'}} title='Fuel'>F</p>
+       <img src={fuel_icon} style={{width: '70%', height: '70%'}}/>
     </SlotContainer>
 }
 
@@ -124,7 +125,6 @@ function Drop(){
     const [getCameraDirection, _setCameraDirectionGetter] = useContext(CameraDirectionContext)
 
     return <SlotContainer
-        style={{backgroundColor: 'DimGrey'}}
         onDragOver={(event: React.DragEvent) => {
             event.preventDefault()
         }}
@@ -136,7 +136,7 @@ function Drop(){
             }
         }}
     >
-        <p style={{userSelect: 'none'}} title='Drop'>D</p>
+        <img src={drop_icon} style={{width: '70%', height: '70%'}}/>
     </SlotContainer>
 }
 
@@ -146,8 +146,10 @@ export default function Inventory({style}: {style?: CSSProperties}){
 
     return <div
         style={{
-            width: '100%',
             height: '100%',
+            display: 'grid',
+            gridTemplateRows: 'auto 10%',
+            borderRadius: '5px',
             ...style
         }}
     >
@@ -157,9 +159,8 @@ export default function Inventory({style}: {style?: CSSProperties}){
                 gridTemplate: 'repeat(4, 1fr) / repeat(5, 1fr)',
                 placeItems: 'center / center',
                 aspectRatio: 5 / 4,
-                maxHeight: '90%',
+                height: '100%',
                 maxWidth: '100%',
-                margin: '0 0 0 auto'
             }}
         >
             <ActionCount/>
@@ -183,7 +184,7 @@ export default function Inventory({style}: {style?: CSSProperties}){
                 return <Item slot={(i + 13).toString()} {...slot} selected={inventory.selected}/>
             })}
         </div>
-        <p style={{textAlign: 'right', width: '100%', lineBreak: 'anywhere'}}>{inventory.selected}: {inventory[inventory.selected].name || 'empty'}</p>
+        <p style={{justifySelf: 'flex-end', lineBreak: 'anywhere'}}>{inventory.selected}: {inventory[inventory.selected].name || 'empty'}</p>
     </div>
     
 }

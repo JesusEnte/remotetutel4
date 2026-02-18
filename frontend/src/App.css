@@ -17,3 +17,7 @@ p {
 .hud-container > * {
   pointer-events: auto;
 }
+
+img {
+  margin: auto;
+}

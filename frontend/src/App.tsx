@@ -89,7 +89,7 @@ export default function App() {
 
         <Actions style={{gridArea: 'br', justifySelf: 'flex-end', alignSelf: 'flex-end'}}/>
 
-        {showInventory ? <Inventory style={{gridArea: 'tr'}}/> : null}
+        {showInventory ? <Inventory style={{gridArea: 'tr', justifySelf: 'flex-end'}}/> : null}
 
         <Menu style={{gridArea: showInventory ? 'mr' : 'tr', justifySelf: 'flex-end'}}/>
       </div>
