@@ -13,3 +13,7 @@ h1 {
 p {
   margin: 0;
 }
+
+.hud-container > * {
+  pointer-events: auto;
+}

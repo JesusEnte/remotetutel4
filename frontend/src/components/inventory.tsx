@@ -1,6 +1,5 @@
 import { InventoryContext } from "../contexts/intentory"
-import { useContext } from "react"
-import { TurtlesContext } from "../contexts/turtles"
+import { useContext, type CSSProperties} from "react"
 import { TurtleIdContext } from "../contexts/turtleId"
 import { WebsocketContext } from "../contexts/websocket"
 import { InventoryActionCountContext } from "../contexts/inventory-action-count"
@@ -11,13 +10,13 @@ function SlotContainer(props: any){
     return <div
     {...props}
     style={{
-        height: '90%',
+        width: '90%',
         aspectRatio: 1,
         textAlign: 'center',
-        alignContent: 'center',
+        placeContent: 'center',
+        placeSelf: 'center',
         border: '2px solid black',
         borderRadius: '5px',
-
         ...props.style,
     }}
     >
@@ -37,18 +36,13 @@ function Item(props: ItemProps){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const [count, _setCount]= useContext(InventoryActionCountContext)
 
-    let bg = 'unset'
-    if (props.color != undefined) bg = `rgba(${(props.color >> 16 & 255)}, ${props.color >> 8 & 255}, ${props.color & 255}, 0.8)`
-
-    let border = '2px solid black'
-    if (props.slot == props.selected) border = '2px solid white'
     return <SlotContainer
         onClick={() => {
             websocket.send(JSON.stringify({type: 'set selected', slot: props.slot, id: turtleId}))
         }}
         style={{
-            backgroundColor: bg,
-            border: border
+            ...(props.color != undefined) && {backgroundColor: `rgba(${(props.color >> 16 & 255)}, ${props.color >> 8 & 255}, ${props.color & 255}, 0.8)`},
+            ...(props.slot == props.selected && {border: '2px solid white'})
         }}
         title={`${props.slot}: ${props.name || 'empty'}`}
         draggable
@@ -81,7 +75,7 @@ function ActionCount(){
             setCount((count * 2) % 127)
         }}
     >
-        <p style={{userSelect: 'none'}}>Count<br/>{count}</p>
+        <p style={{userSelect: 'none'}}>{count}</p>
     </SlotContainer>
 }
 
@@ -97,11 +91,11 @@ function Craft(){
             websocket.send(JSON.stringify({type: 'craft', id: turtleId, count: count}))
         }}
     >
-        <p style={{userSelect: 'none'}}>Craft</p>
+        <p style={{userSelect: 'none'}} title='Craft'>C</p>
     </SlotContainer>
 }
 
-function Refuel(){
+function Fuel(){
     const [count, _setCount] = useContext(InventoryActionCountContext)
     const websocket = useContext(WebsocketContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
@@ -119,7 +113,7 @@ function Refuel(){
             }
         }}
     >
-        <p style={{userSelect: 'none'}}>Refuel</p>
+        <p style={{userSelect: 'none'}} title='Fuel'>F</p>
     </SlotContainer>
 }
 
@@ -142,53 +136,54 @@ function Drop(){
             }
         }}
     >
-        <p style={{userSelect: 'none'}}>Drop</p>
+        <p style={{userSelect: 'none'}} title='Drop'>D</p>
     </SlotContainer>
 }
 
-export default function Inventory(){
+export default function Inventory({style}: {style?: CSSProperties}){
     const [inventory, _setInventory] = useContext(InventoryContext)
-    const [turtles, _setTurtles] = useContext(TurtlesContext)
-    const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
-    const turtle = turtleId ? turtles[turtleId] : null
+    if (!inventory) return null
 
-    if (inventory == null || turtle == null || turtle.status == 'offline') return null
-    return <>
-    <div
+    return <div
         style={{
-            display: 'grid',
-            gridTemplate: 'repeat(4, 1fr) / repeat(5, 1fr)',
-            alignItems: 'center',
-            justifyItems: 'center',
-            aspectRatio: 5 / 4,
-            height: '25svh',
-            border: '3px solid white',
-            borderRadius: '5px',
-            padding: '2px'
+            width: '100%',
+            height: '100%',
+            ...style
         }}
     >
-        <ActionCount/>
-        {[...Array(4)].map((_v, i) => {
-            const slot = inventory[i + 1]
-            return <Item slot={(i + 1).toString()} {...slot} selected={inventory.selected}/>
-        })}
-        <Craft/>
-        {[...Array(4)].map((_v, i) => {
-            const slot = inventory[i + 5]
-            return <Item slot={(i + 5).toString()} {...slot} selected={inventory.selected}/>
-        })}
-        <Refuel/>
-        {[...Array(4)].map((_v, i) => {
-            const slot = inventory[i + 9]
-            return <Item slot={(i + 9).toString()} {...slot} selected={inventory.selected}/>
-        })}
-        <Drop/>
-        {[...Array(4)].map((_v, i) => {
-            const slot = inventory[i + 13]
-            return <Item slot={(i + 13).toString()} {...slot} selected={inventory.selected}/>
-        })}
+        <div
+            style={{
+                display: 'grid',
+                gridTemplate: 'repeat(4, 1fr) / repeat(5, 1fr)',
+                placeItems: 'center / center',
+                aspectRatio: 5 / 4,
+                maxHeight: '90%',
+                maxWidth: '100%',
+                margin: '0 0 0 auto'
+            }}
+        >
+            <ActionCount/>
+            {[...Array(4)].map((_v, i) => {
+                const slot = inventory[i + 1]
+                return <Item slot={(i + 1).toString()} {...slot} selected={inventory.selected}/>
+            })}
+            <Craft/>
+            {[...Array(4)].map((_v, i) => {
+                const slot = inventory[i + 5]
+                return <Item slot={(i + 5).toString()} {...slot} selected={inventory.selected}/>
+            })}
+            <Fuel/>
+            {[...Array(4)].map((_v, i) => {
+                const slot = inventory[i + 9]
+                return <Item slot={(i + 9).toString()} {...slot} selected={inventory.selected}/>
+            })}
+            <Drop/>
+            {[...Array(4)].map((_v, i) => {
+                const slot = inventory[i + 13]
+                return <Item slot={(i + 13).toString()} {...slot} selected={inventory.selected}/>
+            })}
+        </div>
+        <p style={{textAlign: 'right', width: '100%', lineBreak: 'anywhere'}}>{inventory.selected}: {inventory[inventory.selected].name || 'empty'}</p>
     </div>
-    <p style={{textAlign: 'right', marginRight: '1%'}}>{inventory.selected}: {inventory[inventory.selected].name || 'empty'}</p>
-    </>
     
 }

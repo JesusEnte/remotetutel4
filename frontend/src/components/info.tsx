@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, type CSSProperties } from "react"
 import { TurtlesContext } from "../contexts/turtles"
 import { TurtleIdContext } from "../contexts/turtleId"
 import { WebsocketContext } from "../contexts/websocket"
@@ -43,7 +43,7 @@ function PrettyInput(props: TextInputProps){
     />
 }
 
-export default function Info(){
+export default function Info({style}: {style?: CSSProperties}){
     const [turtleId, setTurtleId] = useContext(TurtleIdContext)
     const [turtles, _setTurtles] = useContext(TurtlesContext)
     const turtle = turtleId ? turtles[turtleId] : null
@@ -51,9 +51,8 @@ export default function Info(){
 
     return <div
         style={{
-            position: 'absolute',
-            left: 0,
-            top: 0
+            width: 'fit-content',
+            ...style
         }}
     >
         <select

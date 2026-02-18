@@ -28,10 +28,12 @@ export default function App() {
 
   const [turtles, setTurtles] = useState<Turtles>({})
   const [turtleId, setTurtleId] = useState<string | null>(null)
+  const turtle = turtleId ? turtles[turtleId] : null
   const [blocks, setBlocks] = useState<Blocks>({})
 
   const [inventoryProps, setInventoryProps] = useState<InventoryProps | null>(null)
   const [inventoryActionCount, setInventoryActionCount] = useState<number>(1)
+  const showInventory = inventoryProps != null && turtle?.status == 'online'
 
   const [getCameraDirection, setCameraDirectionGetter] = useState<(n: 2 | 3) => string>(null!)
   const [tooltipProps, setTooltipProps] = useState<TooltipProps | null>(null)
@@ -63,17 +65,33 @@ export default function App() {
       <World/>
       {tooltipProps ? <Tooltip {...tooltipProps}/> : null} 
 
-      <Info/>
-      <Actions/>
       <div
+        className="hud-container"
         style={{
           position: 'absolute',
+          left: 0,
           top: 0,
-          right: 0
+          width: '100%',
+          height: '100%',
+          display: 'grid',
+          gridTemplate: '15% 15% auto 15% 15% / 40% auto 40%',
+          gridTemplateAreas: `
+            'tl tr tr'
+            'tl tr tr'
+            'bl bl mr'
+            'bl bl br'
+            'bl bl br'
+          `,
+          pointerEvents: 'none'
         }}
-        >
-        <Inventory/>
-        <Menu/>
+      >
+        <Info style={{gridArea: 'tl'}}/>
+
+        <Actions style={{gridArea: 'br', justifySelf: 'flex-end', alignSelf: 'flex-end'}}/>
+
+        {showInventory ? <Inventory style={{gridArea: 'tr'}}/> : null}
+
+        <Menu style={{gridArea: showInventory ? 'mr' : 'tr', justifySelf: 'flex-end'}}/>
       </div>
       
 
