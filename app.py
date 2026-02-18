@@ -9,13 +9,13 @@ import sys
 
 from backend.turtles import TurtleCollection, turtle_connection_handler
 from backend.blocks import BlockCollection 
-from backend.frontends import User, frontend_connection_handler
+from backend.frontends import UserPointer, frontend_connection_handler
 
 load_dotenv()
 
 app = Flask(__name__, static_url_path='', static_folder='frontend/dist')
 
-user: User = None
+userPointer = UserPointer() 
 turtles = TurtleCollection()
 blocks = BlockCollection()
 
@@ -39,7 +39,7 @@ def ws_turtle():
 @app.route('/ws/frontends', websocket=True)
 def ws_frontend():
     ws = Server.accept(request.environ)
-    frontend_connection_handler(ws, user, turtles, blocks)
+    frontend_connection_handler(ws, userPointer, turtles, blocks)
     while ws.connected:
         gevent.sleep(5)
     print('Client disconnected')

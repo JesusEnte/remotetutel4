@@ -76,13 +76,26 @@ class User:
             case _:
                 print(message)
 
-def frontend_connection_handler(ws, user, turtles: TurtleCollection, blocks: BlockCollection):
+class UserPointer:
+    def __init__(self):
+        self.user = None
+    def set(self, user: User):
+        self.user = user
+    def get(self) -> User:
+        return self.user
+
+def frontend_connection_handler(ws, userPointer: UserPointer, turtles: TurtleCollection, blocks: BlockCollection):
     message = json.loads(ws.receive())
     if message.get('type') != 'authentication':
         return
     if message.get('password') == os.getenv('PASSWORD'):
         ws.send(json.dumps({'type': 'authentication', 'status': 'success'}))
+        try:
+            userPointer.get().ws.close()
+        except:
+            pass
         user = User(ws)
+        userPointer.set(user)
         print('Client connected')
         while ws.connected:
             try:
