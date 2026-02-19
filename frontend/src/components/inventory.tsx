@@ -7,6 +7,7 @@ import { CameraDirectionContext } from "../contexts/camera-direction"
 import craft_icon from '../assets/craft_icon.png'
 import fuel_icon from '../assets/fuel_icon.png'
 import drop_icon from '../assets/drop_icon.png'
+import { ChestContext } from "../contexts/chest"
 
 
 function SlotContainer(props: any){
@@ -37,6 +38,7 @@ function Item(props: ItemProps){
     const websocket = useContext(WebsocketContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const [count, _setCount]= useContext(InventoryActionCountContext)
+    const [chest, _setChest] = useContext(ChestContext)
 
     return <SlotContainer
         onClick={() => {
@@ -57,10 +59,14 @@ function Item(props: ItemProps){
         }}
         onDrop={(event: React.DragEvent) => {
             const start = event.dataTransfer.getData('text')
-            if (start.includes('Slot')){
-                const from = start.slice(start.indexOf('Slot') + 5)
+            if (start.includes('Slot ')){
+                const from = start.slice('Slot '.length)
                 const to = props.slot
                 websocket.send(JSON.stringify({type: 'transferTo', from: from, to: to, count: count, id: turtleId}))
+            } else if (start.includes('Chest ')){
+                const from = start.slice('Chest '.length)
+                const to = props.slot
+                websocket.send(JSON.stringify({type: 'pull from chest', direction: chest!.direction, from: from, count: count, to: to, id: turtleId}))
             }
         }}
     >

@@ -93,13 +93,13 @@ export default function App() {
         >
         <Info style={{gridArea: 'tl'}}/>
 
-        <Actions style={{gridArea: 'br', justifySelf: 'flex-end', alignSelf: 'flex-end'}}/>
+        {chestProps == null ? <Actions style={{gridArea: 'br', justifySelf: 'flex-end', alignSelf: 'flex-end'}}/> : null}
 
         {showInventory ? <Inventory style={{gridArea: 'tr', justifySelf: 'flex-end'}}/> : null}
 
         <Menu style={{gridArea: showInventory ? 'mr' : 'tr', justifySelf: 'flex-end'}}/>
 
-        <Chest style={{gridArea: 'bl', justifySelf: 'flex-end'}}/>
+        {chestProps == null ? null : <Chest style={{gridArea: 'bl', justifySelf: 'flex-end'}}/>}
       </div>
       
 

@@ -1,12 +1,16 @@
 import { useContext, type CSSProperties } from "react"
 import { ChestContext } from "../contexts/chest"
 import { TooltipContext } from "../contexts/tooltip-props"
+import { InventoryActionCountContext } from "../contexts/inventory-action-count"
+import { WebsocketContext } from "../contexts/websocket"
+import { TurtleIdContext } from "../contexts/turtleId"
 
 export default function Chest({style}: {style?: CSSProperties}){
     const [chest, setChest] = useContext(ChestContext)
     const setTooltip = useContext(TooltipContext)
-    
-    if (chest == null) return null
+    const [actionCount, _setActionCount] = useContext(InventoryActionCountContext)
+    const websocket = useContext(WebsocketContext)
+    const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
 
     return <div
         style={{
@@ -28,7 +32,7 @@ export default function Chest({style}: {style?: CSSProperties}){
                 borderBottom: '2px solid white'
             }}
         >
-            <p style={{placeSelf: 'center center'}}>{chest.name}</p>
+            <p style={{placeSelf: 'center center'}}>{chest!.name} <span title="Limited Functionality due to in-game constraints, e.g. furnaces wont't work properly">🛈</span></p>
             <button 
                 onClick = {() => {
                     setChest(null)
@@ -37,8 +41,9 @@ export default function Chest({style}: {style?: CSSProperties}){
                     color: 'red', 
                     aspectRatio: 1, 
                     height: '100%', 
-                    backgroundColor: 'rgba(100, 100, 100, 0.8)',
-                    border: 'none'
+                    background: 'transparent',
+                    borderLeft: '3px solid white',
+                    borderTop: 'none', borderRight: 'none', borderBottom: 'none'
                 }}
             >
                 X
@@ -56,11 +61,12 @@ export default function Chest({style}: {style?: CSSProperties}){
                 padding: '3px'
             }}
         >
-            {[...Array(chest.size)].map((_v, i) => {
-                const name = chest.inventory.at(i) == undefined ? 'empty' : chest.inventory.at(i)!.name
-                const count = chest.inventory.at(i) == undefined ? 0 : chest.inventory.at(i)!.count
+            {[...Array(chest!.size)].map((_v, i) => {
+                const slot = i + 1
+                const name = chest!.inventory.at(i) == undefined ? 'empty' : chest!.inventory.at(i)!.name
+                const count = chest!.inventory.at(i) == undefined ? 0 : chest!.inventory.at(i)!.count
                 return <p
-                    key={i + 1}
+                    key={slot}
                     style={{
                         aspectRatio: 1,
                         height: '4ch',
@@ -69,9 +75,27 @@ export default function Chest({style}: {style?: CSSProperties}){
                         border: '2px solid white',
                         userSelect: 'none'
                     }}
-                    title={`${i + 1}: ${name}`}
+                    title={`${slot}: ${name}`}
                     onClick={(event: React.MouseEvent<HTMLParagraphElement>) => {
-                        setTooltip({x: event.clientX, y: event.clientY, time: 1500, text: `${i + 1}: ${name}`})
+                        setTooltip({x: event.clientX, y: event.clientY, time: 1500, text: `${slot}: ${name}`})
+                    }}
+                    draggable
+                    onDragStart={(event: React.DragEvent) => {
+                        event.dataTransfer.setData('text', `Chest ${slot}`)
+                    }}
+                    onDragOver={(event: React.DragEvent) => {
+                        event.preventDefault()
+                    }}
+                    onDrop={(event: React.DragEvent) => {
+                        const start = event.dataTransfer.getData('text')
+                        if (start.includes('Slot ')){
+                            const from = start.slice('Slot '.length)
+                            websocket.send(JSON.stringify({type: 'push to chest', direction: chest!.direction, from: from, count: actionCount, id: turtleId}))
+                        } else if (start.includes('Chest ')){
+                            const from = start.slice('Chest '.length)
+                            const to = slot
+                            websocket.send(JSON.stringify({type: 'move in chest', direction: chest!.direction, from: from, count: actionCount, to: to, id: turtleId}))
+                        }
                     }}
                 >
                     {count}

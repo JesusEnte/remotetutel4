@@ -192,9 +192,9 @@ class Turtle:
     def craft(self, count):
         self.eval(f'turtle.craft({count})')
 
-    def transferTo(self, f, t, count):
-        self.set_selected(f)
-        self.eval(f'turtle.transferTo({t}, {count})')
+    def transferTo(self, fromSlot, toSlot, count):
+        self.set_selected(fromSlot)
+        self.eval(f'turtle.transferTo({toSlot}, {count})')
 
     def refuel(self, slot, count):
         self.set_selected(slot)
@@ -230,6 +230,7 @@ class Turtle:
             chest = {{inventory = peripheral.call('{direction}', 'list')}}
             chest.size = peripheral.call('{direction}', 'size')
             chest.name = types[1]
+            chest.direction = '{direction}'
 
             return chest
         """)[0]
@@ -241,6 +242,42 @@ class Turtle:
             chest['inventory'] = []
 
         return chest
+    
+    def pull_from_chest(self, direction, fromSlot, count, toSlot):
+        match (direction):
+            case 'front':
+                suck = 'suck'
+                drop = 'drop'
+            case 'top':
+                suck = 'suckUp'
+                drop = 'dropUp'
+            case 'bottom':
+                suck = 'suckDown'
+                drop = 'dropDown'
+        self.eval(f"""
+            if (turtle.getItemCount({toSlot}) ~= 0) then return end
+            turtle.select({toSlot})
+            turtle.{suck}()
+            peripheral.call('{direction}', 'pushItems', '{direction}', {fromSlot}, {count}, 1)
+            turtle.{drop}()
+            turtle.{suck}({count})
+        """)
+
+    def push_to_chest(self, direction, fromSlot, count):
+        match (direction):
+            case 'front':
+                drop = 'drop'
+            case 'top':
+                drop = 'dropUp'
+            case 'bottom':
+                drop = 'dropDown'
+        self.eval(f"""
+            turtle.select({fromSlot})
+            turtle.{drop}({count})
+        """)
+
+    def move_in_chest(self, direction, fromSlot, count, toSlot):
+        self.eval(f"peripheral.call('{direction}', 'pushItems', '{direction}', {fromSlot}, {count}, {toSlot})")
         
 class TurtleCollection:
     def __init__(self):

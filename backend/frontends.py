@@ -21,6 +21,10 @@ class User:
         inventory = turtle.get_inventory()
         self.ws.send(json.dumps({'type': 'inventory', 'inventory': inventory}))
 
+    def update_chest(self, turtle: Turtle, direction: str):
+        chest = turtle.get_chest(direction)
+        self.ws.send(json.dumps({'type': 'chest', 'chest': chest}))
+
     def on_message(self, message, turtles: TurtleCollection, blocks: BlockCollection):
         if message.get('type') is None:
             return
@@ -71,8 +75,18 @@ class User:
                 turtle.drop(message['slot'], message['count'], message['direction'])
                 self.update_inventory(turtle)
             case 'get chest':
-                chest = turtle.get_chest(message['direction'])
-                self.ws.send(json.dumps({'type': 'chest', 'chest': chest}))
+                self.update_chest(turtle, message['direction'])
+            case 'pull from chest':
+                turtle.pull_from_chest(message['direction'], message['from'], message['count'], message['to'])
+                self.update_chest(turtle, message['direction'])
+                self.update_inventory(turtle)
+            case 'push to chest':
+                turtle.push_to_chest(message['direction'], message['from'], message['count'])
+                self.update_chest(turtle, message['direction'])
+                self.update_inventory(turtle)
+            case 'move in chest':
+                turtle.move_in_chest(message['direction'], message['from'], message['count'], message['to'])
+                self.update_chest(turtle, message['direction'])
             case _:
                 print(message)
 
