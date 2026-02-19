@@ -80,7 +80,7 @@ export default function App() {
           width: '100%',
           height: '100%',
           display: 'grid',
-          gridTemplate: '15% 15% auto 15% 15% / 40% auto 40%',
+          gridTemplate: '15% 15% 40% 15% 15% / 40% 20% 40%',
           gridTemplateAreas: `
           'tl tr tr'
           'tl tr tr'
