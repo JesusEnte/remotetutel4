@@ -91,13 +91,13 @@ export default function World(){
 
 
     return <Canvas
-
+        frameloop="demand"
         onPointerMissed={() => {
             setTooltipProps({x: 0, y:0, text: '', time: 0})
         }}
-
+        
         camera={{position:[3, 3, 3]}}
-
+        
         style={{
             position: 'absolute',
             width: '100svw',
@@ -107,11 +107,12 @@ export default function World(){
             zIndex: -1
         }}
         
-    >
+        >
         <color 
             attach="background"
             args={['#4b8ab1']}
         />
+        <CameraMover target={target}/>
         <OrbitControls
             target={target}
             enablePan={false}
@@ -134,7 +135,6 @@ export default function World(){
             {...block}
             />
         })}
-        <CameraMover target={target}/>
         <GetCameraDirectionSetter/>
     </Canvas>
 }
