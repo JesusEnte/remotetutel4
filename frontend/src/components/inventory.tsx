@@ -150,6 +150,7 @@ export default function Inventory({style}: {style?: CSSProperties}){
             display: 'grid',
             gridTemplateRows: '90% 10%',
             borderRadius: '5px',
+            placeItems: 'flex-start flex-end',
             ...style
         }}
     >
@@ -158,7 +159,6 @@ export default function Inventory({style}: {style?: CSSProperties}){
                 display: 'grid',
                 gridTemplate: 'repeat(4, 1fr) / repeat(5, 1fr)',
                 placeItems: 'center center',
-                justifySelf: 'flex-end',
                 aspectRatio: 5 / 4,
                 maxHeight: '100%',
                 maxWidth: '100%',
@@ -185,7 +185,7 @@ export default function Inventory({style}: {style?: CSSProperties}){
                 return <Item slot={(i + 13).toString()} {...slot} selected={inventory.selected} key={i + 1}/>
             })}
         </div>
-        <p style={{justifySelf: 'flex-end', lineBreak: 'anywhere'}}>{inventory.selected}: {inventory[inventory.selected].name || 'empty'}</p>
+        <p style={{lineBreak: 'anywhere'}}>{inventory.selected}: {inventory[inventory.selected].name || 'empty'}</p>
     </div>
     
 }
