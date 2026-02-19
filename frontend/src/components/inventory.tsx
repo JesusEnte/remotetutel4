@@ -157,8 +157,9 @@ export default function Inventory({style}: {style?: CSSProperties}){
                 display: 'grid',
                 gridTemplate: 'repeat(4, 1fr) / repeat(5, 1fr)',
                 placeItems: 'center center',
+                justifySelf: 'flex-end',
                 aspectRatio: 5 / 4,
-                height: '100%',
+                maxHeight: '100%',
                 maxWidth: '100%',
             }}
         >
