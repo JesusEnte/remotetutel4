@@ -146,6 +146,7 @@ export default function Inventory({style}: {style?: CSSProperties}){
     return <div
         style={{
             height: '100%',
+            width: '100%',
             display: 'grid',
             gridTemplateRows: '90% 10%',
             borderRadius: '5px',
