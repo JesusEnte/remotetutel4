@@ -125,7 +125,7 @@ export default function World(){
         {Array.from(Object.entries(turtles)).map(([id, turtle]) => {
             return turtle.status == 'unknown position' ? null : 
             <TurtleMesh
-            key={`turtle ${turtle.x}/${turtle.y}/${turtle.z}/${turtle.dir} ${id}`}
+            key={`turtle ${id}`}
             {...turtle}
             />
         })}
