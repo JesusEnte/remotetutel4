@@ -11,6 +11,9 @@ import { TurtleIdContext } from './contexts/turtleId.ts'
 import { CameraDirectionContext } from './contexts/camera-direction.ts'
 import { TooltipContext, type TooltipProps } from './contexts/tooltip-props.ts'
 import { InventoryContext, type InventoryProps } from './contexts/intentory.ts'
+import { InventoryActionCountContext } from './contexts/inventory-action-count.ts'
+import { ChestContext, type ChestProps } from './contexts/chest.ts'
+import { BlockFilterContext } from './contexts/block-filter.ts'
 
 import MessageHandler from './components/message-handler.tsx'
 import World from './components/world.tsx'
@@ -19,9 +22,8 @@ import Actions from './components/actions.tsx'
 import Tooltip from './components/tooltip.tsx'
 import Menu from './components/menu.tsx'
 import Inventory from './components/inventory.tsx'
-import { InventoryActionCountContext } from './contexts/inventory-action-count.ts'
-import { ChestContext, type ChestProps } from './contexts/chest.ts'
 import Chest from './components/chest.tsx'
+import BlockFilter from './components/block-filter.tsx'
 
 export default function App() {
   
@@ -31,7 +33,9 @@ export default function App() {
   const [turtles, setTurtles] = useState<Turtles>({})
   const [turtleId, setTurtleId] = useState<string | null>(null)
   const turtle = turtleId ? turtles[turtleId] : null
+
   const [blocks, setBlocks] = useState<Blocks>({})
+  const [blockFilter, setBlockFilter] = useState<string>('')
 
   const [inventoryProps, setInventoryProps] = useState<InventoryProps | null>(null)
   const [inventoryActionCount, setInventoryActionCount] = useState<number>(1)
@@ -41,6 +45,8 @@ export default function App() {
 
   const [getCameraDirection, setCameraDirectionGetter] = useState<(n: 2 | 3) => string>(null!)
   const [tooltipProps, setTooltipProps] = useState<TooltipProps | null>(null)
+
+  const [menu, setMenu]= useState<string | null>(null)
 
 
 
@@ -63,12 +69,12 @@ export default function App() {
     <InventoryContext value={[inventoryProps, setInventoryProps]}>
     <InventoryActionCountContext value={[inventoryActionCount, setInventoryActionCount]}>
     <ChestContext value={[chestProps, setChestProps]}>
-
-
+    <BlockFilterContext value={[blockFilter, setBlockFilter]}>
 
       <MessageHandler/>
       
       <World/>
+
       {tooltipProps ? <Tooltip {...tooltipProps}/> : null} 
 
       <div
@@ -91,18 +97,38 @@ export default function App() {
           pointerEvents: 'none'
         }}
         >
+
         <Info style={{gridArea: 'tl'}}/>
 
         {chestProps == null ? <Actions style={{gridArea: 'br', justifySelf: 'flex-end', alignSelf: 'flex-end'}}/> : null}
 
         {showInventory ? <Inventory style={{gridArea: 'tr', justifySelf: 'flex-end'}}/> : null}
 
-        <Menu style={{gridArea: showInventory ? 'mr' : 'tr', justifySelf: 'flex-end'}}/>
-
         {chestProps == null ? null : <Chest style={{gridArea: 'bl', justifySelf: 'flex-end'}}/>}
+        
+
+        <div
+          className="hud-container" 
+          style={{
+            display: 'grid',
+            gridTemplateRows: '5svh calc(100% - 5svh)',
+            rowGap: '10px',
+            gridArea: 'mr',
+            justifyContent: 'flex-end',
+            justifyItems: 'flex-end',
+            pointerEvents: 'none'
+          }}
+        >
+          <Menu menu={menu} setMenu={setMenu} style={{height: '5svh'}}/>
+          {menu != 'filter' ? null : <BlockFilter/>}
+        </div>
+
+
+        
       </div>
       
 
+    </BlockFilterContext>
     </ChestContext>
     </InventoryActionCountContext>
     </InventoryContext>

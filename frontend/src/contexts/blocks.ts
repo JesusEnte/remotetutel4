@@ -4,7 +4,7 @@ export interface Block {
     x: number
     y: number
     z: number
-    name: string | null
+    name: string
     color: number
 }
 

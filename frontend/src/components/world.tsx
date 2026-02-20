@@ -11,6 +11,7 @@ import usePrevious from "../hooks/use-previous"
 import { Vector3 } from "three"
 import { CameraDirectionContext } from "../contexts/camera-direction"
 import { TooltipContext } from "../contexts/tooltip-props"
+import { BlockFilterContext } from "../contexts/block-filter"
 
 function TurtleMesh(props: Turtle){
     const setTooltipProps = useContext(TooltipContext)
@@ -86,6 +87,7 @@ export default function World(){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const turtle = turtleId ? turtles[turtleId] : null
     const setTooltipProps = useContext(TooltipContext)
+    const [blockFilter, _setBlockFilter] = useContext(BlockFilterContext)
     
     const target = (turtle == null || turtle.status == 'position unknown') ? new Vector3(0, 0, 0) : new Vector3(turtle.x, turtle.y, turtle.z)
 
@@ -130,6 +132,7 @@ export default function World(){
             />
         })}
         {Array.from(Object.entries(blocks)).map(([id, block]) => {
+            if (blockFilter && !block.name.includes(blockFilter)) return null
             return <BlockMesh
             key={`block ${id} ${block.name}`}
             {...block}
