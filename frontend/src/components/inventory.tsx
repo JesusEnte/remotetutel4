@@ -78,12 +78,14 @@ function Item(props: ItemProps){
 function ActionCount(){
     const [count, setCount] = useContext(InventoryActionCountContext)
     return <SlotContainer
-        style={{backgroundColor: 'rgba(255, 255, 255, 0.8)'}}
+        style={{
+            backgroundColor: `hsl(${(count * 100) % 360}, 50%, 50%)`
+        }}
         onClick={() => {
             setCount((count * 2) % 127)
         }}
     >
-        <p style={{userSelect: 'none', color: 'black'}}>{count}</p>
+        <p style={{userSelect: 'none'}}>{count}</p>
     </SlotContainer>
 }
 

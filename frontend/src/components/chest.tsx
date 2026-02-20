@@ -57,8 +57,18 @@ export default function Chest({style}: {style?: CSSProperties}){
                 maxWidth: '100%',
                 maxHeight: '100%',
                 gap: '2px',
-                alignContent: 'flex-start',
+                placeContent: 'flex-start flex-start',
                 padding: '3px'
+            }}
+            onDragOver={(event: React.DragEvent) => {
+                event.preventDefault()
+            }}
+            onDrop={(event: React.DragEvent) => {
+                const start = event.dataTransfer.getData('text')
+                if (start.includes('Slot ')){
+                    const from = start.slice('Slot '.length)
+                    websocket.send(JSON.stringify({type: 'push to chest', direction: chest!.direction, from: from, count: actionCount, id: turtleId}))
+                }
             }}
         >
             {[...Array(chest!.size)].map((_v, i) => {
