@@ -30,15 +30,27 @@ class User:
             return
 
         turtle: Turtle = turtles.get(message.get('id'))
-            
+        
+        # Don't need a online turtle
         match (message['type']):
             case 'get turtles':
                 self.update_turtles(turtles)
             case 'get blocks':
                 self.update_blocks(blocks)
             case 'set info':
+                if turtle is None:
+                    return
                 turtle.update_info(message.get('info', {}))
-                self.ws.send(json.dumps({'type': 'turtles', 'turtles': {turtle.id: turtle.to_jsonable_dict()}}))
+                self.update_turtle(turtle)
+            case _:
+                #Filter out missing / offline turtles
+                if turtle is None:
+                    return
+                if turtle.status == 'offline':
+                    return
+
+        # Need a online turtle
+        match (message['type']):
             case 'go':
                 block_changes = turtle.go(message['direction'], blocks)
                 self.update_blocks(block_changes)
@@ -90,8 +102,6 @@ class User:
             case 'interpreter':
                 response = turtle.eval(message['code'])
                 self.ws.send(json.dumps({'type': 'interpreter response', 'response': response}))
-            case _:
-                print(message)
 
 class UserPointer:
     def __init__(self):
