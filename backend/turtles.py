@@ -176,8 +176,7 @@ class Turtle:
             inventory = {{}}
                          
             for i=1,16 do
-                item = turtle.getItemDetail(i, true)
-                item = item and {{name = item.name, count = item.count, color = item.mapColor}} or {{}}
+                item = turtle.getItemDetail(i, false)
                 inventory[tostring(i)] = item
             end
                          

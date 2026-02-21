@@ -4,6 +4,7 @@ import { TooltipContext } from "../contexts/tooltip-props"
 import { InventoryActionCountContext } from "../contexts/inventory-action-count"
 import { WebsocketContext } from "../contexts/websocket"
 import { TurtleIdContext } from "../contexts/turtleId"
+import { string_to_hue } from "../utils/colors"
 
 export default function Chest({style}: {style?: CSSProperties}){
     const [chest, setChest] = useContext(ChestContext)
@@ -75,9 +76,11 @@ export default function Chest({style}: {style?: CSSProperties}){
                 const slot = i + 1
                 const name = chest!.inventory.at(i) == undefined ? 'empty' : chest!.inventory.at(i)!.name
                 const count = chest!.inventory.at(i) == undefined ? 0 : chest!.inventory.at(i)!.count
+                const hue = name != 'empty' ? string_to_hue(name) : undefined
                 return <p
                     key={slot}
                     style={{
+                        ...(hue != undefined && {backgroundColor: `hsla(${hue}, 80%, 50%, 0.8)`}),
                         aspectRatio: 1,
                         height: '4ch',
                         textAlign: 'center',

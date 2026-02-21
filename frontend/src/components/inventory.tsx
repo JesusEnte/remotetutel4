@@ -8,6 +8,7 @@ import craft_icon from '../assets/craft_icon.png'
 import fuel_icon from '../assets/fuel_icon.png'
 import drop_icon from '../assets/drop_icon.png'
 import { ChestContext } from "../contexts/chest"
+import { string_to_hue } from "../utils/colors"
 
 
 function SlotContainer(props: any){
@@ -30,7 +31,6 @@ function SlotContainer(props: any){
 interface ItemProps {
     name?: string
     count?: number
-    color?: number
     slot: string
     selected: string
 }
@@ -39,13 +39,14 @@ function Item(props: ItemProps){
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const [count, _setCount]= useContext(InventoryActionCountContext)
     const [chest, _setChest] = useContext(ChestContext)
-
+    const hue = props.name ? string_to_hue(props.name) : undefined
+    
     return <SlotContainer
         onClick={() => {
             websocket.send(JSON.stringify({type: 'set selected', slot: props.slot, id: turtleId}))
         }}
         style={{
-            ...(props.color != undefined) && {backgroundColor: `rgba(${(props.color >> 16 & 255)}, ${props.color >> 8 & 255}, ${props.color & 255}, 0.8)`},
+            ...(hue != undefined && {backgroundColor: `hsla(${hue}, 80%, 50%, 0.8)`}),
             ...(props.slot == props.selected && {border: '2px solid white'})
         }}
         title={`${props.slot}: ${props.name || 'empty'}`}
@@ -78,9 +79,6 @@ function Item(props: ItemProps){
 function ActionCount(){
     const [count, setCount] = useContext(InventoryActionCountContext)
     return <SlotContainer
-        style={{
-            backgroundColor: `hsl(${(count * 100) % 360}, 50%, 50%)`
-        }}
         onClick={() => {
             setCount((count * 2) % 127)
         }}
@@ -151,6 +149,7 @@ export default function Inventory({style}: {style?: CSSProperties}){
     const [inventory, _setInventory] = useContext(InventoryContext)
     if (!inventory) return null
 
+    
     return <div
         className="hud-container"
         style={{
@@ -194,7 +193,7 @@ export default function Inventory({style}: {style?: CSSProperties}){
                 return <Item slot={(i + 13).toString()} {...slot} selected={inventory.selected} key={i + 1}/>
             })}
         </div>
-        <p style={{lineBreak: 'anywhere'}}>{inventory.selected}: {inventory[inventory.selected].name || 'empty'}</p>
+        <p style={{lineBreak: 'anywhere'}}>{inventory.selected}: {inventory[inventory.selected]?.name || 'empty'}</p>
     </div>
     
 }

@@ -1,9 +1,8 @@
 import { createContext } from "react"
 
 interface Item {
-    name?: string
-    count?: number
-    color?: number
+    name: string
+    count: number
 }
 
 export type InventoryProps = Record<string, Item> & {

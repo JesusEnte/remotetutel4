@@ -57,6 +57,7 @@ export default function Info({style}: {style?: CSSProperties}){
         }}
     >
         <select
+            value={turtleId || 'hint'}
             style={{width: '100%'}}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 setTurtleId(e.target.value)
@@ -65,7 +66,7 @@ export default function Info({style}: {style?: CSSProperties}){
                 websocket.send(JSON.stringify({type: 'get turtles'}))
             }}
         >
-            {[<option key='hint' disabled={turtleId != null}>Select a Turtle</option>].concat(Array.from(Object.entries(turtles)).map(([id, turtle]) => {
+            {[<option key='hint' disabled={turtleId != null} value={'hint'}>Select a Turtle</option>].concat(Array.from(Object.entries(turtles)).map(([id, turtle]) => {
                 return <option key={`${id} ${turtle.status}`} value={id}>#{id}: {turtle.status}</option>
             }))}
         </select>
