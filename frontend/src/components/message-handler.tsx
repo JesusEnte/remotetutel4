@@ -31,6 +31,9 @@ export default function MessageHandler(){
             case 'chest':
                 setChest(message.chest)
                 break
+            case 'interpreter response':
+                alert(`Interpreter response:\n${JSON.stringify(message.response)}`)
+                break
             default:
                 console.log(message)
         }

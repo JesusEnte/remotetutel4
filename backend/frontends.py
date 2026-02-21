@@ -87,6 +87,9 @@ class User:
             case 'move in chest':
                 turtle.move_in_chest(message['direction'], message['from'], message['count'], message['to'])
                 self.update_chest(turtle, message['direction'])
+            case 'interpreter':
+                response = turtle.eval(message['code'])
+                self.ws.send(json.dumps({'type': 'interpreter response', 'response': response}))
             case _:
                 print(message)
 

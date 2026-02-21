@@ -24,6 +24,7 @@ import Menu from './components/menu.tsx'
 import Inventory from './components/inventory.tsx'
 import Chest from './components/chest.tsx'
 import BlockFilter from './components/block-filter.tsx'
+import Interpreter from './components/interpreter.tsx'
 
 export default function App() {
   
@@ -121,6 +122,7 @@ export default function App() {
         >
           <Menu menu={menu} setMenu={setMenu} style={{height: '5svh'}}/>
           {menu != 'filter' ? null : <BlockFilter/>}
+          {menu != 'interpreter' ? null : <Interpreter/>}
         </div>
 
 
