@@ -152,6 +152,7 @@ export default function Inventory({style}: {style?: CSSProperties}){
     if (!inventory) return null
 
     return <div
+        className="hud-container"
         style={{
             height: '100%',
             width: '100%',

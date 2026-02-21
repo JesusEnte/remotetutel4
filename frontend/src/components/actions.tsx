@@ -22,6 +22,7 @@ export default function Actions({style}: {style?: CSSProperties}){
     if (turtle == null || turtle.status != 'online') return null
 
     return <div
+        className="hud-container"
         style={{
             aspectRatio: 1,
             display: 'grid',

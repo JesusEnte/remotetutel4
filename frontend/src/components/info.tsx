@@ -50,6 +50,7 @@ export default function Info({style}: {style?: CSSProperties}){
     const websocket = useContext(WebsocketContext)
 
     return <div
+        className="hud-container"
         style={{
             width: 'fit-content',
             ...style
@@ -65,7 +66,7 @@ export default function Info({style}: {style?: CSSProperties}){
             }}
         >
             {[<option key='hint' disabled={turtleId != null}>Select a Turtle</option>].concat(Array.from(Object.entries(turtles)).map(([id, turtle]) => {
-                return <option key={`${id} ${turtle.status}`}value={id}>#{id}: {turtle.status}</option>
+                return <option key={`${id} ${turtle.status}`} value={id}>#{id}: {turtle.status}</option>
             }))}
         </select>
         {turtle == null ? null : 

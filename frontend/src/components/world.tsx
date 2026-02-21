@@ -14,11 +14,11 @@ import { TooltipContext } from "../contexts/tooltip-props"
 import { BlockFilterContext } from "../contexts/block-filter"
 
 function TurtleMesh(props: Turtle){
-    const setTooltipProps = useContext(TooltipContext)
+    const [_turtleId, setTurtleId] = useContext(TurtleIdContext)
     return <Gltf
         onClick={(event: ThreeEvent<MouseEvent>) => {
             event.stopPropagation()
-            setTooltipProps({x: event.x, y: event.y, time: 3000, text: `#${props.id}: ${props.status}`})
+            setTurtleId(props.id)
         }}
         src={TutelGLB} 
         position={[props.x, props.y, props.z]} 

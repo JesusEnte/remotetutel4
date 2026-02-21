@@ -94,8 +94,7 @@ export default function App() {
           'bl bl mr'
           'bl bl br'
           'bl bl br'
-          `,
-          pointerEvents: 'none'
+          `
         }}
         >
 

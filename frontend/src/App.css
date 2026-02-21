@@ -9,10 +9,14 @@ h1, h2, h3, p {
   margin: 0
 }
 
-
 .hud-container > * {
   pointer-events: auto;
 }
+
+.hud-container {
+  pointer-events: none;
+}
+
 
 img {
   margin: auto;
