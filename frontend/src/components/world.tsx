@@ -37,7 +37,7 @@ function BlockMesh(props: Block){
         position={[props.x, props.y, props.z]}
         onClick={(event: ThreeEvent<MouseEvent>) => {
             event.stopPropagation()
-            setTooltipProps({x: event.x, y: event.y, time: 3000, text: props.name!})
+            setTooltipProps({x: event.x, y: event.y, time: 3000, text: `${props.x}/${props.y}/${props.z} ${props.name!}`})
         }}
         >
             <boxGeometry/>
