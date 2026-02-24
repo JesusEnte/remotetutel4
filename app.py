@@ -47,26 +47,25 @@ def ws_frontend():
 
 
 #Serve wget for turtles
-@app.route('/startup.lua')
+@app.route('/wget/startup.lua')
 def wget_startup():
     with open('turtle/startup_template.lua', 'r') as template:
         #Change SERVER_URL in template
         file = template.read()
         prot = os.getenv('SSL', 'false') == 'true' and 'https' or 'http'
-        url = f'{prot}://{os.getenv('URL', '127.0.0.1:80')}/'
-        file = file.replace('SERVER_URL = \'\' --empty cuz template', f'SERVER_URL = \'{url}\'', 1)
+        url = f'{prot}://{os.getenv('URL', '127.0.0.1:80')}/wget/remotetutel.lua'
+        file = file.replace('WGET_URL = \'\' --empty cuz template', f'WGET_URL = \'{url}\'', 1)
         return file
     
-@app.route('/remotetutel.lua')
+@app.route('/wget/remotetutel.lua')
 def wget_remotetutel():
     with open('turtle/remotetutel_template.lua', 'r') as template:
         #Change SERVER_URL in template
         file = template.read()
         prot = os.getenv('SSL', 'false') == 'true' and 'wss' or 'ws'
-        url = f'{prot}://{os.getenv('URL', '127.0.0.1:80')}/'
-        file = file.replace('SERVER_URL = \'\' --empty cuz template', f'SERVER_URL = \'{url}\'', 1)
+        url = f'{prot}://{os.getenv('URL', '127.0.0.1:80')}/ws/turtles'
+        file = file.replace('WEBSOCKET_URL = \'\' --empty cuz template', f'WEBSOCKET_URL = \'{url}\'', 1)
         return file
-
 
 
 

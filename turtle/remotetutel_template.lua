@@ -1,4 +1,4 @@
-SERVER_URL = '' --empty cuz template
+WEBSOCKET_URL = '' --empty cuz template
 
 --pretty terminal
 term.clear()
@@ -6,15 +6,14 @@ term.setCursorPos(1,1)
 print(string.format('#%d: %s\n\n', os.computerID(), os.computerLabel()))
 
 
-websocket_url = string.format('%sws/turtles', SERVER_URL)
 websocket = nil
 
 status, err = pcall(function()
 
     --websocket connection
-    websocket, err = http.websocket(websocket_url)
+    websocket, err = http.websocket(WEBSOCKET_URL)
     if err then
-        print(string.format('Couldn\'t connect to %s, retrying in 20 seconds\nError: %s', websocket_url, err))
+        print(string.format('Couldn\'t connect to %s, retrying in 20 seconds\nError: %s', WEBSOCKET_URL, err))
         sleep(20)
         os.reboot()
     end
