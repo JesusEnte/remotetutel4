@@ -50,58 +50,61 @@ class User:
                     return
 
         # Need a online turtle
-        match (message['type']):
-            case 'go':
-                block_changes = turtle.go(message['direction'], blocks)
-                self.update_blocks(block_changes)
-                turtle.update_fuel()
-                self.update_turtle(turtle)
-            case 'right click':
-                block_changes = turtle.right_click(message['direction'], blocks)
-                self.update_blocks(block_changes)
-                self.update_inventory(turtle)
-            case 'left click':
-                block_changes = turtle.left_click(message['direction'], blocks)
-                self.update_blocks(block_changes)
-                self.update_inventory(turtle)
-            case 'suck':
-                turtle.suck(message['direction'])
-                self.update_inventory(turtle)
-            case 'get inventory':
-                self.update_inventory(turtle)
-            case 'set selected':
-                turtle.set_selected(message['slot'])
-                self.update_inventory(turtle)
-            case 'craft':
-                turtle.craft(message['count'])
-                self.update_inventory(turtle)
-            case 'transferTo':
-                turtle.transferTo(message['from'], message['to'], message['count'])
-                self.update_inventory(turtle)
-            case 'refuel':
-                turtle.refuel(message['slot'], message['count'])
-                self.update_inventory(turtle)
-                turtle.update_fuel()
-                self.update_turtle(turtle)
-            case 'drop':
-                turtle.drop(message['slot'], message['count'], message['direction'])
-                self.update_inventory(turtle)
-            case 'get chest':
-                self.update_chest(turtle, message['direction'])
-            case 'pull from chest':
-                turtle.pull_from_chest(message['direction'], message['from'], message['count'], message['to'])
-                self.update_chest(turtle, message['direction'])
-                self.update_inventory(turtle)
-            case 'push to chest':
-                turtle.push_to_chest(message['direction'], message['from'], message['count'])
-                self.update_chest(turtle, message['direction'])
-                self.update_inventory(turtle)
-            case 'move in chest':
-                turtle.move_in_chest(message['direction'], message['from'], message['count'], message['to'])
-                self.update_chest(turtle, message['direction'])
-            case 'interpreter':
-                response = turtle.eval(message['code'])
-                self.ws.send(json.dumps({'type': 'interpreter response', 'response': response}))
+        try:
+            match (message['type']):
+                case 'go':
+                    block_changes = turtle.go(message['direction'], blocks)
+                    self.update_blocks(block_changes)
+                    turtle.update_fuel()
+                    self.update_turtle(turtle)
+                case 'right click':
+                    block_changes = turtle.right_click(message['direction'], blocks)
+                    self.update_blocks(block_changes)
+                    self.update_inventory(turtle)
+                case 'left click':
+                    block_changes = turtle.left_click(message['direction'], blocks)
+                    self.update_blocks(block_changes)
+                    self.update_inventory(turtle)
+                case 'suck':
+                    turtle.suck(message['direction'])
+                    self.update_inventory(turtle)
+                case 'get inventory':
+                    self.update_inventory(turtle)
+                case 'set selected':
+                    turtle.set_selected(message['slot'])
+                    self.update_inventory(turtle)
+                case 'craft':
+                    turtle.craft(message['count'])
+                    self.update_inventory(turtle)
+                case 'transferTo':
+                    turtle.transferTo(message['from'], message['to'], message['count'])
+                    self.update_inventory(turtle)
+                case 'refuel':
+                    turtle.refuel(message['slot'], message['count'])
+                    self.update_inventory(turtle)
+                    turtle.update_fuel()
+                    self.update_turtle(turtle)
+                case 'drop':
+                    turtle.drop(message['slot'], message['count'], message['direction'])
+                    self.update_inventory(turtle)
+                case 'get chest':
+                    self.update_chest(turtle, message['direction'])
+                case 'pull from chest':
+                    turtle.pull_from_chest(message['direction'], message['from'], message['count'], message['to'])
+                    self.update_chest(turtle, message['direction'])
+                    self.update_inventory(turtle)
+                case 'push to chest':
+                    turtle.push_to_chest(message['direction'], message['from'], message['count'])
+                    self.update_chest(turtle, message['direction'])
+                    self.update_inventory(turtle)
+                case 'move in chest':
+                    turtle.move_in_chest(message['direction'], message['from'], message['count'], message['to'])
+                    self.update_chest(turtle, message['direction'])
+                case 'interpreter':
+                    response = turtle.eval(message['code'])
+                    self.ws.send(json.dumps({'type': 'interpreter response', 'response': response}))
+        except simple_websocket.ConnectionClosed:
+            self.update_turtle(turtle)
 
 class UserPointer:
     def __init__(self):

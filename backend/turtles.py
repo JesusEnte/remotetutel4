@@ -1,5 +1,7 @@
 import json
 from backend.blocks import BlockCollection
+from simple_websocket import ConnectionClosed
+
 
 class Turtle:
     def __init__(self, id, x=None, y=None, z=None, dir=None, fuel=None, ws=None):
@@ -42,6 +44,7 @@ class Turtle:
             return 'offline'
     
     def eval(self, lua_code: str):
+        self.check_connection()
         self.ws.send(json.dumps({'type': 'eval', 'code': lua_code}))
         response = json.loads(self.ws.receive())
         if response.get('type') != 'eval': return
@@ -49,6 +52,16 @@ class Turtle:
             print(response.get('error'))
             return 'error'
         return response.get('data')
+    
+    def check_connection(self) -> None:
+        self.ws.send(json.dumps({'type': 'eval', 'code': 'return turtle.detect()'})) #fast an requires loaded chunk -> great for unloaded chunk detection
+        if self.ws.receive(1) == None:
+            try:
+                self.ws.close()
+                self.set_websocket(None)
+            except ConnectionClosed:
+                ...
+            raise ConnectionClosed('Timeout')
     
     def forwards_math(self, distance) -> dict:
         match (self.dir):
