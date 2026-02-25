@@ -36,7 +36,10 @@ export default function Actions({style}: {style?: CSSProperties}){
             ...style
         }}
     >
-        <div/>
+        <p 
+        title='WASD: Movement, Shift/Ctrl: Up/Down, Q/E: Left/Right Click, F: Suck'
+        style={{userSelect: 'none'}}
+        >🛈</p>
         <img style={{maxWidth: '100%', maxHeight: '100%'}} src={forward_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: 'forward', id: turtleId}))}}/>
         <img style={{maxWidth: '60%', maxHeight: '60%'}} src={right_click_icon} onClick={() => {websocket.send(JSON.stringify({type: 'right click', direction: getCameraDirection(3), id: turtleId}))}}/>
         <img style={{maxWidth: '100%', maxHeight: '100%'}} src={left_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: 'left', id: turtleId}))}}/>

@@ -25,6 +25,7 @@ import Inventory from './components/inventory.tsx'
 import Chest from './components/chest.tsx'
 import BlockFilter from './components/block-filter.tsx'
 import Interpreter from './components/interpreter.tsx'
+import KeyboardControls from './components/keyboard-controls.tsx'
 
 export default function App() {
   
@@ -73,6 +74,7 @@ export default function App() {
     <BlockFilterContext value={[blockFilter, setBlockFilter]}>
 
       <MessageHandler/>
+      <KeyboardControls/>
       
       <World/>
 
