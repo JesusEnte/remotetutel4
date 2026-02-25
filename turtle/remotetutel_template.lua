@@ -27,7 +27,7 @@ status, err = pcall(function()
         --receive and unserialise
         msg = websocket.receive()
         if msg == nil then
-            print('Server closed connection, rebooting in 20 seconds')
+            print('Disconnected, rebooting in 20 seconds')
             sleep(20)
             os.reboot()
         end
@@ -65,9 +65,7 @@ status, err = pcall(function()
 
 end)
 
---reboot on error
-if not status then
-    print(string.format('Error: %s\nRebooting in 20 seconds', err))
-    sleep(20)
-    os.reboot()
-end
+
+print(string.format('Disconnected, rebooting in 20 seconds', err))
+sleep(20)
+os.reboot()
