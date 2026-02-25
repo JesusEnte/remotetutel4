@@ -60,7 +60,7 @@ class Turtle:
                 self.ws.close()
                 self.set_websocket(None)
             except ConnectionClosed:
-                ...
+                pass
             raise ConnectionClosed('Timeout')
     
     def forwards_math(self, distance) -> dict:
@@ -316,7 +316,7 @@ class TurtleCollection:
         for k, v in jsonable_dict.items():
             self.turtles[k] = Turtle(v.get('id'), v.get('x'), v.get('y'), v.get('z'), v.get('dir'), v.get('fuel'))
 
-def turtle_connection_handler(ws, turtles):
+def turtle_connection_handler(ws, turtles: TurtleCollection) -> Turtle:
     message = json.loads(ws.receive())
     if message.get('type') != 'authentication':
         return
@@ -327,3 +327,4 @@ def turtle_connection_handler(ws, turtles):
     else:
         turtles.add(id, ws=ws)
     print(f'Turtle #{id} connected')
+    return turtles.get(id)

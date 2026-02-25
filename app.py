@@ -29,10 +29,16 @@ def root():
 @app.route('/ws/turtles', websocket=True)
 def ws_turtle():
     ws = Server.accept(request.environ)
-    turtle_connection_handler(ws, turtles)
+    turtle = turtle_connection_handler(ws, turtles)
+    user = userPointer.get()
+    if user:
+        user.update_turtle(turtle)
     while ws.connected:
         gevent.sleep(5)
     print('Turtle disconnected')
+    user = userPointer.get()
+    if user:
+        user.update_turtle(turtle)
     return "Connection Closed"
     
 

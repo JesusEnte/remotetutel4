@@ -46,7 +46,7 @@ class User:
                 #Filter out missing / offline turtles
                 if turtle is None:
                     return
-                if turtle.status == 'offline':
+                if not turtle.ws or not turtle.ws.connected:
                     return
 
         # Need a online turtle
@@ -104,7 +104,7 @@ class User:
                     response = turtle.eval(message['code'])
                     self.ws.send(json.dumps({'type': 'interpreter response', 'response': response}))
         except simple_websocket.ConnectionClosed:
-            self.update_turtle(turtle)
+            return
 
 class UserPointer:
     def __init__(self):
