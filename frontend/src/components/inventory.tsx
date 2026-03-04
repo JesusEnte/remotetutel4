@@ -59,6 +59,8 @@ function Item(props: ItemProps){
             event.preventDefault()
         }}
         onDrop={(event: React.DragEvent) => {
+            event.preventDefault()
+            event.stopPropagation()
             const start = event.dataTransfer.getData('text')
             if (start.includes('Slot ')){
                 const from = start.slice('Slot '.length)
@@ -112,6 +114,8 @@ function Fuel(){
             event.preventDefault()
         }}
         onDrop={(event: React.DragEvent) => {
+            event.preventDefault()
+            event.stopPropagation()
             const start = event.dataTransfer.getData('text')
             if (start.includes('Slot')){
                 const slot = start.slice(start.indexOf('Slot') + 5)
@@ -134,6 +138,8 @@ function Drop(){
             event.preventDefault()
         }}
         onDrop={(event: React.DragEvent) => {
+            event.preventDefault()
+            event.stopPropagation()
             const start = event.dataTransfer.getData('text')
             if (start.includes('Slot')){
                 const slot = start.slice(start.indexOf('Slot') + 5)

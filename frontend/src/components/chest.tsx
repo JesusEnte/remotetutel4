@@ -65,6 +65,8 @@ export default function Chest({style}: {style?: CSSProperties}){
                 event.preventDefault()
             }}
             onDrop={(event: React.DragEvent) => {
+                event.preventDefault()
+                event.stopPropagation()
                 const start = event.dataTransfer.getData('text')
                 if (start.includes('Slot ')){
                     const from = start.slice('Slot '.length)
@@ -100,6 +102,8 @@ export default function Chest({style}: {style?: CSSProperties}){
                         event.preventDefault()
                     }}
                     onDrop={(event: React.DragEvent) => {
+                        event.preventDefault()
+                        event.stopPropagation()
                         const start = event.dataTransfer.getData('text')
                         if (start.includes('Slot ')){
                             const from = start.slice('Slot '.length)
