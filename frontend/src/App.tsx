@@ -102,7 +102,7 @@ export default function App() {
 
         <Info style={{gridArea: 'tl'}}/>
 
-        {chestProps == null ? <Actions style={{gridArea: 'br', justifySelf: 'flex-end', alignSelf: 'flex-end'}}/> : null}
+        {turtle?.status == 'online' ? <Actions style={{gridArea: 'br', justifySelf: 'flex-end', alignSelf: 'flex-end'}}/> : null}
 
         {showInventory ? <Inventory style={{gridArea: 'tr', justifySelf: 'flex-end'}}/> : null}
 
