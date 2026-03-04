@@ -31,8 +31,6 @@ export default function Actions({style}: {style?: CSSProperties}){
             alignItems: 'center',
             maxWidth: '100%',
             maxHeight: '100%',
-            width: 'max-content',
-            height: 'max-content',
             ...style
         }}
     >
@@ -40,13 +38,13 @@ export default function Actions({style}: {style?: CSSProperties}){
         title='WASD: Movement, Shift/Ctrl: Up/Down, Q/E: Left/Right Click, F: Suck'
         style={{userSelect: 'none'}}
         >🛈</p>
-        <img style={{maxWidth: '100%', maxHeight: '100%'}} src={forward_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: 'forward', id: turtleId}))}}/>
-        <img style={{maxWidth: '60%', maxHeight: '60%'}} src={right_click_icon} onClick={() => {websocket.send(JSON.stringify({type: 'right click', direction: getCameraDirection(3), id: turtleId}))}}/>
-        <img style={{maxWidth: '100%', maxHeight: '100%'}} src={left_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: 'left', id: turtleId}))}}/>
-        <img style={{maxWidth: '60%', maxHeight: '60%'}} src={vertical_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: getCameraDirection(2), id: turtleId}))}}/>
-        <img style={{maxWidth: '100%', maxHeight: '100%'}} src={right_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: 'right', id: turtleId}))}}/>
-        <img style={{maxWidth: '60%', maxHeight: '60%'}} src={left_click_icon} onClick={() => {websocket.send(JSON.stringify({type: 'left click', direction: getCameraDirection(3), id: turtleId}))}}/>
-        <img style={{maxWidth: '100%', maxHeight: '100%'}} src={back_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: 'back', id: turtleId}))}}/>
-        <img style={{maxWidth: '60%', maxHeight: '60%'}} src={suck_icon} onClick={() => {websocket.send(JSON.stringify({type: 'suck', direction: 'all', id: turtleId}))}}/>
+        <img style={{width: '100%'}} src={forward_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: 'forward', id: turtleId}))}}/>
+        <img style={{width: '60%'}} src={right_click_icon} onClick={() => {websocket.send(JSON.stringify({type: 'right click', direction: getCameraDirection(3), id: turtleId}))}}/>
+        <img style={{width: '100%'}} src={left_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: 'left', id: turtleId}))}}/>
+        <img style={{width: '60%'}} src={vertical_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: getCameraDirection(2), id: turtleId}))}}/>
+        <img style={{width: '100%'}} src={right_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: 'right', id: turtleId}))}}/>
+        <img style={{width: '60%'}} src={left_click_icon} onClick={() => {websocket.send(JSON.stringify({type: 'left click', direction: getCameraDirection(3), id: turtleId}))}}/>
+        <img style={{width: '100%'}} src={back_icon} onClick={() => {websocket.send(JSON.stringify({type: 'go', direction: 'back', id: turtleId}))}}/>
+        <img style={{width: '60%'}} src={suck_icon} onClick={() => {websocket.send(JSON.stringify({type: 'suck', direction: 'all', id: turtleId}))}}/>
     </div>
 }
