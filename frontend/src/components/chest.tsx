@@ -1,17 +1,25 @@
-import { useContext, type CSSProperties } from "react"
-import { ChestContext } from "../contexts/chest"
-import { TooltipContext } from "../contexts/tooltip-props"
+import { useContext } from "react"
+import type { ChestInfo } from "../types/chest"
+import { type TooltipProps } from "./tooltip"
 import { InventoryActionCountContext } from "../contexts/inventory-action-count"
 import { WebsocketContext } from "../contexts/websocket"
 import { TurtleIdContext } from "../contexts/turtleId"
 import { string_to_hue } from "../utils/colors"
 
-export default function Chest({style}: {style?: CSSProperties}){
-    const [chest, setChest] = useContext(ChestContext)
-    const setTooltip = useContext(TooltipContext)
+interface ChestProps {
+    style?: React.CSSProperties
+    info: ChestInfo | null
+    setInfo: (c: ChestInfo | null) => void
+    setTooltip: (t: TooltipProps) => void
+}
+
+export default function Chest(props: ChestProps){
+    const {info, setInfo, style, setTooltip} = props
     const [actionCount, _setActionCount] = useContext(InventoryActionCountContext)
     const websocket = useContext(WebsocketContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
+
+    if (info == null) return null    
 
     return <div
         style={{
@@ -33,10 +41,10 @@ export default function Chest({style}: {style?: CSSProperties}){
                 borderBottom: '2px solid white'
             }}
         >
-            <p style={{placeSelf: 'center center'}}>{chest!.name} <span title="Limited Functionality due to in-game constraints, e.g. furnaces wont't work properly">🛈</span></p>
+            <p style={{placeSelf: 'center center'}}>{info.name} <span title="Limited Functionality due to in-game constraints, e.g. furnaces wont't work properly">🛈</span></p>
             <button 
                 onClick = {() => {
-                    setChest(null)
+                    setInfo(null)
                 }}
                 style={{placeSelf: 'center flex-end', 
                     color: 'red', 
@@ -70,14 +78,14 @@ export default function Chest({style}: {style?: CSSProperties}){
                 const start = event.dataTransfer.getData('text')
                 if (start.includes('Slot ')){
                     const from = start.slice('Slot '.length)
-                    websocket.send(JSON.stringify({type: 'push to chest', direction: chest!.direction, from: from, count: actionCount, id: turtleId}))
+                    websocket.send(JSON.stringify({type: 'push to chest', direction: info.direction, from: from, count: actionCount, id: turtleId}))
                 }
             }}
         >
-            {[...Array(chest!.size)].map((_v, i) => {
+            {[...Array(info.size)].map((_v, i) => {
                 const slot = i + 1
-                const name = chest!.inventory.at(i) == undefined ? 'empty' : chest!.inventory.at(i)!.name
-                const count = chest!.inventory.at(i) == undefined ? 0 : chest!.inventory.at(i)!.count
+                const name = info.inventory.at(i) == undefined ? 'empty' : info.inventory.at(i)!.name
+                const count = info.inventory.at(i) == undefined ? 0 : info.inventory.at(i)!.count
                 const hue = name != 'empty' ? string_to_hue(name) : undefined
                 return <p
                     key={slot}
@@ -107,11 +115,11 @@ export default function Chest({style}: {style?: CSSProperties}){
                         const start = event.dataTransfer.getData('text')
                         if (start.includes('Slot ')){
                             const from = start.slice('Slot '.length)
-                            websocket.send(JSON.stringify({type: 'push to chest', direction: chest!.direction, from: from, count: actionCount, id: turtleId}))
+                            websocket.send(JSON.stringify({type: 'push to chest', direction: info.direction, from: from, count: actionCount, id: turtleId}))
                         } else if (start.includes('Chest ')){
                             const from = start.slice('Chest '.length)
                             const to = slot
-                            websocket.send(JSON.stringify({type: 'move in chest', direction: chest!.direction, from: from, count: actionCount, to: to, id: turtleId}))
+                            websocket.send(JSON.stringify({type: 'move in chest', direction: info.direction, from: from, count: actionCount, to: to, id: turtleId}))
                         }
                     }}
                 >

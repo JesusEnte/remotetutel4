@@ -1,22 +1,27 @@
 import { useEffect, useContext } from "react"
 import { WebsocketContext } from "../contexts/websocket"
 import { TurtlesContext } from "../contexts/turtles"
-import { BlocksContext, type Blocks } from "../contexts/blocks"
+import { type Blocks } from "../types/block"
 import { TurtleIdContext } from "../contexts/turtleId"
-import { InventoryContext } from "../contexts/intentory"
-import { ChestContext } from "../contexts/chest"
+import type { InventoryInfo } from "../types/inventory"
+import type { ChestInfo } from "../types/chest"
 
-export default function MessageHandler(){
+interface MessageHandlerProps {
+    blocks: Blocks
+    setBlocks: (b: Blocks) => void
+    setChest: (c: ChestInfo) => void
+    setInventory: (i: InventoryInfo) => void
+}
 
+export default function MessageHandler(props: MessageHandlerProps){
+
+    const {blocks, setBlocks, setChest, setInventory} = props
     const websocket = useContext(WebsocketContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const [turtles, setTurtles] = useContext(TurtlesContext)
-    const [blocks, setBlocks] = useContext(BlocksContext)
-    const [_inventory, setInventory] = useContext(InventoryContext)
     const turtle = turtleId ? turtles[turtleId] : null
-    const [_chest, setChest] = useContext(ChestContext)
 
-    function websocket_message_handler(ev: MessageEvent){
+    websocket.onmessage = (ev: MessageEvent) => {
         const message = JSON.parse(ev.data)
         switch (message.type) {
             case 'turtles':
@@ -39,16 +44,14 @@ export default function MessageHandler(){
         }
     }
 
-    websocket.onmessage = websocket_message_handler
-
     useEffect(() => {
         websocket.send(JSON.stringify({type: 'get turtles'}))
         websocket.send(JSON.stringify({type: 'get blocks'}))
-    }, [websocket])
+    }, [])
 
     useEffect(() => {
         if (turtle?.status == 'online') websocket.send(JSON.stringify({type: 'get inventory', id: turtleId}))
-    }, [turtleId])
+    }, [turtleId, turtle?.status])
 
     return null
 }

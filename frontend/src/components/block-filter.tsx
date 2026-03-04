@@ -1,8 +1,11 @@
-import { useContext, type CSSProperties } from 'react'
-import { BlockFilterContext } from '../contexts/block-filter'
+interface BlockFilterProps {
+    style?: React.CSSProperties
+    setFilter: (f: string) => void
+}
 
-export default function BlockFilter({style} : {style?: CSSProperties}){
-    const [_filter, setFilter] = useContext(BlockFilterContext)
+export default function BlockFilter(props: BlockFilterProps){
+    const {style, setFilter} = props
+
     return <div
         style={{
             height: 'fit-content',

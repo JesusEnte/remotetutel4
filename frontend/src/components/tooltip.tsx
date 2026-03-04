@@ -1,9 +1,16 @@
 import { useEffect, useRef } from "react"
-import { type TooltipProps } from "../contexts/tooltip-props"
 
-export default function Tooltip(props: TooltipProps){
+export interface TooltipProps {
+    x: number
+    y: number
+    time: number
+    text: string
+}
+
+export default function Tooltip(props: TooltipProps | null){
+    if (props == null) return null
+    
     const ref = useRef<HTMLParagraphElement>(null!)
-
     useEffect(() => {
         const timeout = setTimeout(() => {
             ref.current.style.visibility = 'hidden'

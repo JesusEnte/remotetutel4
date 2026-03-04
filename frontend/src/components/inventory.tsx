@@ -1,5 +1,4 @@
-import { InventoryContext } from "../contexts/intentory"
-import { useContext, type CSSProperties} from "react"
+import { useContext } from "react"
 import { TurtleIdContext } from "../contexts/turtleId"
 import { WebsocketContext } from "../contexts/websocket"
 import { InventoryActionCountContext } from "../contexts/inventory-action-count"
@@ -7,8 +6,9 @@ import { CameraDirectionContext } from "../contexts/camera-direction"
 import craft_icon from '../assets/craft_icon.png'
 import fuel_icon from '../assets/fuel_icon.png'
 import drop_icon from '../assets/drop_icon.png'
-import { ChestContext } from "../contexts/chest"
 import { string_to_hue } from "../utils/colors"
+import type { ChestInfo } from "../types/chest"
+import type {InventoryInfo} from '../types/inventory'
 
 
 function SlotContainer(props: any){
@@ -33,27 +33,28 @@ interface ItemProps {
     count?: number
     slot: string
     selected: string
+    chestInfo: ChestInfo | null
 }
 function Item(props: ItemProps){
+    const {name, count, slot, selected, chestInfo} = props
     const websocket = useContext(WebsocketContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
-    const [count, _setCount]= useContext(InventoryActionCountContext)
-    const [chest, _setChest] = useContext(ChestContext)
-    const hue = props.name ? string_to_hue(props.name) : undefined
+    const [actionCount, _]= useContext(InventoryActionCountContext)
+    const hue = name ? string_to_hue(name) : undefined
     
     return <SlotContainer
         onClick={() => {
-            websocket.send(JSON.stringify({type: 'set selected', slot: props.slot, id: turtleId}))
+            websocket.send(JSON.stringify({type: 'set selected', slot: slot, id: turtleId}))
         }}
         style={{
             ...(hue != undefined && {backgroundColor: `hsla(${hue}, 80%, 50%, 0.8)`}),
-            ...(props.slot == props.selected && {border: '2px solid white'})
+            ...(slot == selected && {border: '2px solid white'})
         }}
-        title={`${props.slot}: ${props.name || 'empty'}`}
+        title={`${slot}: ${name || 'empty'}`}
         draggable
 
         onDragStart={(event: React.DragEvent) => {
-            event.dataTransfer.setData('text', `Slot ${props.slot}`)
+            event.dataTransfer.setData('text', `Slot ${slot}`)
         }}
         onDragOver={(event: React.DragEvent) => {
             event.preventDefault()
@@ -64,16 +65,16 @@ function Item(props: ItemProps){
             const start = event.dataTransfer.getData('text')
             if (start.includes('Slot ')){
                 const from = start.slice('Slot '.length)
-                const to = props.slot
-                websocket.send(JSON.stringify({type: 'transferTo', from: from, to: to, count: count, id: turtleId}))
+                const to = slot
+                websocket.send(JSON.stringify({type: 'transferTo', from: from, to: to, count: actionCount, id: turtleId}))
             } else if (start.includes('Chest ')){
                 const from = start.slice('Chest '.length)
-                const to = props.slot
-                websocket.send(JSON.stringify({type: 'pull from chest', direction: chest!.direction, from: from, count: count, to: to, id: turtleId}))
+                const to = slot
+                websocket.send(JSON.stringify({type: 'pull from chest', direction: chestInfo!.direction, from: from, count: actionCount, to: to, id: turtleId}))
             }
         }}
     >
-        <p style={{userSelect: 'none'}}>{props.count || 0}</p>
+        <p style={{userSelect: 'none'}}>{count || 0}</p>
     </SlotContainer>
 }
 
@@ -151,9 +152,17 @@ function Drop(){
     </SlotContainer>
 }
 
-export default function Inventory({style}: {style?: CSSProperties}){
-    const [inventory, _setInventory] = useContext(InventoryContext)
-    if (!inventory) return null
+interface InventoryProps {
+    style?: React.CSSProperties
+    chestInfo: ChestInfo | null
+    show: boolean
+    inventory: InventoryInfo | null
+}
+
+export default function Inventory(props: InventoryProps){
+    const {style, chestInfo, show, inventory} = props
+    
+    if (!inventory || !show) return null
 
     
     return <div
@@ -181,22 +190,22 @@ export default function Inventory({style}: {style?: CSSProperties}){
             <ActionCount/>
             {[...Array(4)].map((_v, i) => {
                 const slot = inventory[i + 1]
-                return <Item slot={(i + 1).toString()} {...slot} selected={inventory.selected} key={i + 1}/>
+                return <Item slot={(i + 1).toString()} {...{...slot, chestInfo}} selected={inventory.selected} key={i + 1}/>
             })}
             <Craft/>
             {[...Array(4)].map((_v, i) => {
                 const slot = inventory[i + 5]
-                return <Item slot={(i + 5).toString()} {...slot} selected={inventory.selected} key={i + 1}/>
+                return <Item slot={(i + 5).toString()} {...{...slot, chestInfo}} selected={inventory.selected} key={i + 1}/>
             })}
             <Fuel/>
             {[...Array(4)].map((_v, i) => {
                 const slot = inventory[i + 9]
-                return <Item slot={(i + 9).toString()} {...slot} selected={inventory.selected} key={i + 1}/>
+                return <Item slot={(i + 9).toString()} {...{...slot, chestInfo}} selected={inventory.selected} key={i + 1}/>
             })}
             <Drop/>
             {[...Array(4)].map((_v, i) => {
                 const slot = inventory[i + 13]
-                return <Item slot={(i + 13).toString()} {...slot} selected={inventory.selected} key={i + 1}/>
+                return <Item slot={(i + 13).toString()} {...{...slot, chestInfo}} selected={inventory.selected} key={i + 1}/>
             })}
         </div>
         <p style={{lineBreak: 'anywhere'}}>{inventory.selected}: {inventory[inventory.selected]?.name || 'empty'}</p>

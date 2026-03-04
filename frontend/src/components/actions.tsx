@@ -19,7 +19,7 @@ export default function Actions({style}: {style?: CSSProperties}){
     const [getCameraDirection, _setCameraDirectionGetter] = useContext(CameraDirectionContext)
     const turtle = turtleId ? turtles[turtleId] : null
 
-    if (turtle == null || turtle.status != 'online') return null
+    if (!(turtle?.status == 'online')) return null
 
     return <div
         className="hud-container"

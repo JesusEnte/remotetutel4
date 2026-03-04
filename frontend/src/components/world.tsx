@@ -1,17 +1,15 @@
 import { useContext, useEffect } from "react"
-import { BlocksContext } from "../contexts/blocks"
 import { TurtlesContext } from "../contexts/turtles"
 import { TurtleIdContext } from "../contexts/turtleId"
 import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber"
-import type { Block } from "../contexts/blocks"
+import type { Block, Blocks} from "../types/block"
 import type { Turtle } from "../contexts/turtles"
 import TutelGLB from '../assets/turtle/turtle.glb'
 import { Gltf , OrbitControls } from "@react-three/drei"
 import usePrevious from "../hooks/use-previous"
 import { Vector3 } from "three"
 import { CameraDirectionContext } from "../contexts/camera-direction"
-import { TooltipContext } from "../contexts/tooltip-props"
-import { BlockFilterContext } from "../contexts/block-filter"
+import { type TooltipProps } from "./tooltip"
 
 function TurtleMesh(props: Turtle){
     const [_turtleId, setTurtleId] = useContext(TurtleIdContext)
@@ -26,8 +24,8 @@ function TurtleMesh(props: Turtle){
     />
 }
 
-function BlockMesh(props: Block){
-    const setTooltipProps = useContext(TooltipContext)
+function BlockMesh(props: Block & {setTooltip: (t: TooltipProps) => void}){
+    const {setTooltip} = props
 
     const r = props.color >> 16 & 255
     const g = props.color >> 8 & 255
@@ -37,7 +35,7 @@ function BlockMesh(props: Block){
         position={[props.x, props.y, props.z]}
         onClick={(event: ThreeEvent<MouseEvent>) => {
             event.stopPropagation()
-            setTooltipProps({x: event.x, y: event.y, time: 3000, text: `${props.x}/${props.y}/${props.z} ${props.name!}`})
+            setTooltip({x: event.x, y: event.y, time: 3000, text: `${props.x}/${props.y}/${props.z} ${props.name!}`})
         }}
         >
             <boxGeometry/>
@@ -81,13 +79,17 @@ function GetCameraDirectionSetter(){
     return null
 }
 
-export default function World(){
-    const [blocks, _setBlocks] = useContext(BlocksContext)
+interface WorldProps {
+    blocks: Blocks
+    blockFilter: string
+    setTooltip: (t: TooltipProps) => void
+}
+
+export default function World(props: WorldProps){
+    const {blocks, blockFilter, setTooltip} = props
     const [turtles, _setTurtles] = useContext(TurtlesContext)
     const [turtleId, _setTurtleId] = useContext(TurtleIdContext)
     const turtle = turtleId ? turtles[turtleId] : null
-    const setTooltipProps = useContext(TooltipContext)
-    const [blockFilter, _setBlockFilter] = useContext(BlockFilterContext)
     
     const target = (turtle == null || turtle.status == 'position unknown') ? new Vector3(0, 0, 0) : new Vector3(turtle.x, turtle.y, turtle.z)
 
@@ -95,7 +97,7 @@ export default function World(){
     return <Canvas
         frameloop="demand"
         onPointerMissed={() => {
-            setTooltipProps({x: 0, y:0, text: '', time: 0})
+            setTooltip({x: 0, y:0, text: '', time: 0})
         }}
         
         camera={{position:[3, 3, 3]}}
@@ -134,6 +136,7 @@ export default function World(){
         {Array.from(Object.entries(blocks)).map(([id, block]) => {
             if (blockFilter && !block.name.includes(blockFilter)) return null
             return <BlockMesh
+            setTooltip={setTooltip}
             key={`block ${id} ${block.name}`}
             {...block}
             />
