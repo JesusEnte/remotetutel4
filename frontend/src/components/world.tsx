@@ -37,10 +37,9 @@ function BlockMesh(props: Block & {setTooltip: (t: TooltipProps) => void}){
             event.stopPropagation()
             setTooltip({x: event.x, y: event.y, time: 3000, text: `${props.x}/${props.y}/${props.z} ${props.name!}`})
         }}
-        >
-            <boxGeometry/>
-            <meshBasicMaterial color={`rgb(${r}, ${g}, ${b})`} transparent={true} opacity={0.8}
-        />
+    >
+        <boxGeometry/>
+        <meshBasicMaterial color={`rgb(${r}, ${g}, ${b})`} transparent={true} opacity={0.8}/>
     </mesh>
 }
 
