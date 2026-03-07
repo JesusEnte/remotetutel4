@@ -27,9 +27,11 @@ export default function Tooltip(props: TooltipProps | null){
             position: 'absolute',
             left: `${props.x}px`,
             top: `${props.y - 15}px`,
-            backgroundColor: 'rgba(70, 70, 70, 0.5)',
+            paddingInline: '0.5ch',
+            backgroundColor: 'rgb(70, 70, 70)',
             borderRadius: '5px',
-            transform: 'translate(-50%, -50%)'
+            transform: 'translate(-50%, -50%)',
+            zIndex: 2
         }}
     >
         {props.text}
